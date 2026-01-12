@@ -1,0 +1,3204 @@
+<!-- evergreen.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Evergreen</title>
+  <style>
+    :root{
+      --bg:#070b09;
+      --panel:#0d1511;
+      --ink:#eaf4ee;
+      --muted:#b8c9be;
+      --border:#1a2a22;
+      --accent:#79c6a0;
+      --danger:#f4a261;
+      --footer-h: 120px;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background: radial-gradient(1200px 700px at 20% 0%, #0c1410, var(--bg));
+      color:var(--ink);
+      font: 16px/1.7 ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+    }
+    header, main{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px 16px;
+    }
+    header{
+      padding-top: 28px;
+      padding-bottom: 10px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .headLeft{ min-width: 0; }
+    h1{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      letter-spacing: 0.5px;
+      margin: 0 0 6px 0;
+      font-weight: 780;
+    }
+    .sub{
+      margin: 0;
+      color: var(--muted);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    /* Reserve space for fixed footer + safe-area */
+    main{
+      padding-bottom: calc(var(--footer-h) + env(safe-area-inset-bottom));
+    }
+
+    .story{
+      background: linear-gradient(180deg, rgba(13,21,17,0.92), rgba(13,21,17,0.68));
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.28);
+      margin-bottom: 0;
+    }
+    .page{
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      margin-top: 14px;
+    }
+    .page:first-child{
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
+    .meta{
+      color: var(--muted);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.2px;
+      margin-bottom: 8px;
+    }
+    .page p{
+      margin: 0;
+      font-size: 18px;
+    }
+
+    footer.actions{
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      background: rgba(7,11,9,0.86);
+      border-top: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      padding-bottom: env(safe-area-inset-bottom);
+      z-index: 5;
+    }
+    .actions .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 10px 16px 12px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .row{
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+    button{
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(13,21,17,0.78);
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      transition: transform 0.05s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+    button:hover{ border-color: rgba(121,198,160,0.75); background: rgba(15,26,20,0.9); }
+    button:active{ transform: translateY(1px); }
+    button:disabled{ opacity: 0.5; cursor: not-allowed; }
+    .danger:hover{ border-color: rgba(244,162,97,0.85); }
+
+    .miniBtn{
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(13,21,17,0.60);
+      color: var(--ink);
+      cursor: pointer;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .miniBtn:hover{ border-color: rgba(121,198,160,0.75); background: rgba(15,26,20,0.9); }
+
+    .statusline{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: var(--muted);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .tag{
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 2px 8px;
+      color: var(--accent);
+      background: rgba(121,198,160,0.10);
+    }
+    .tag.danger{
+      color: var(--danger);
+      background: rgba(244,162,97,0.10);
+    }
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1px 6px;
+      background: rgba(0,0,0,0.25);
+      color: var(--ink);
+    }
+
+    /* Preferences modal (mobile scroll fixed) */
+    .modalBack{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.68);
+      display: none;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 18px;
+      z-index: 20;
+    }
+    .modal{
+      width: min(920px, 100%);
+      background: linear-gradient(180deg, rgba(13,21,17,0.96), rgba(13,21,17,0.86));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 18px 55px rgba(0,0,0,0.45);
+      overflow: hidden;
+      max-height: calc(100vh - 36px);
+      display: flex;
+      flex-direction: column;
+      margin: 18px 0;
+    }
+    .modalHeader{
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      flex: 0 0 auto;
+    }
+    .modalHeader h2{
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: 15px;
+      letter-spacing: 0.3px;
+    }
+    .modalHeader .hint{
+      color: var(--muted);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: 12px;
+    }
+    .modalBody{
+      padding: 14px 16px 16px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+    .grid2{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    @media (max-width: 760px){
+      .grid2{ grid-template-columns: 1fr; }
+      button{ text-align: center; }
+      .row{ grid-template-columns: 1fr; }
+    }
+    .card{
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(0,0,0,0.18);
+    }
+    .card h3{
+      margin: 0 0 8px 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.2px;
+      color: var(--ink);
+    }
+    .rowFields{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .rowFields3{
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 760px){
+      .rowFields, .rowFields3{ grid-template-columns: 1fr; }
+    }
+    label{
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: 12px;
+    }
+    select, input[type="text"]{
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(13,21,17,0.75);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      outline: none;
+      width: 100%;
+    }
+    .checks{
+      display: grid;
+      gap: 8px;
+      color: var(--muted);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: 12px;
+    }
+    .checks label{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .modalFooter{
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      flex: 0 0 auto;
+    }
+    .primary{
+      background: rgba(121,198,160,0.18);
+      border-color: rgba(121,198,160,0.35);
+    }
+    .primary:hover{
+      background: rgba(121,198,160,0.24);
+      border-color: rgba(121,198,160,0.70);
+    }
+    .note{
+      color: var(--muted);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .warn{
+      color: var(--danger);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="headLeft">
+      <h1>Evergreen</h1>
+      <p class="sub">
+        Choose from the numbered options below. (Keyboard: <span class="kbd">1</span>–<span class="kbd">5</span>.)
+      </p>
+    </div>
+    <button class="miniBtn" id="prefsBtn" type="button">Preferences</button>
+  </header>
+
+  <main>
+    <section class="story" id="story"></section>
+  </main>
+
+  <footer class="actions" aria-label="Options">
+    <div class="wrap">
+      <div class="row">
+        <button id="nextBtn">1. Next</button>
+        <button id="prevBtn">2. Prev</button>
+        <button id="saveBtn">3. Save</button>
+        <button id="loadBtn">4. Load</button>
+        <button id="quitBtn" class="danger">5. Quit</button>
+      </div>
+      <div class="statusline" id="status"></div>
+    </div>
+  </footer>
+
+  <!-- Preferences modal -->
+  <div class="modalBack" id="prefsBack" role="dialog" aria-modal="true" aria-labelledby="prefsTitle">
+    <div class="modal">
+      <div class="modalHeader">
+        <h2 id="prefsTitle">Story preferences</h2>
+        <div class="hint" id="prefsHint">You can keep it simple; defaults work.</div>
+      </div>
+
+      <div class="modalBody">
+        <div class="grid2">
+          <div class="card">
+            <h3>Narrator</h3>
+            <div class="rowFields">
+              <label>
+                Identity
+                <select id="nIdentity">
+                  <option value="woman">Woman</option>
+                  <option value="man">Man</option>
+                  <option value="nonbinary">Nonbinary</option>
+                  <option value="trans_woman">Trans woman</option>
+                  <option value="trans_man">Trans man</option>
+                </select>
+              </label>
+              <label>
+                Pronouns
+                <select id="nPronounPreset">
+                  <option value="auto">Auto</option>
+                  <option value="she">She/her</option>
+                  <option value="he">He/him</option>
+                  <option value="they">They/them</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </label>
+            </div>
+            <div class="rowFields3" id="nCustomWrap" style="display:none; margin-top:10px;">
+              <label>Subject<input type="text" id="nSubj" value="they" /></label>
+              <label>Object<input type="text" id="nObj" value="them" /></label>
+              <label>Possessive<input type="text" id="nPossAdj" value="their" /></label>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Love interest</h3>
+            <div class="rowFields">
+              <label>
+                Identity
+                <select id="lIdentity">
+                  <option value="woman">Woman</option>
+                  <option value="man">Man</option>
+                  <option value="nonbinary">Nonbinary</option>
+                  <option value="trans_woman">Trans woman</option>
+                  <option value="trans_man">Trans man</option>
+                </select>
+              </label>
+              <label>
+                Pronouns
+                <select id="lPronounPreset">
+                  <option value="auto">Auto</option>
+                  <option value="she">She/her</option>
+                  <option value="he">He/him</option>
+                  <option value="they">They/them</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </label>
+            </div>
+            <div class="rowFields3" id="lCustomWrap" style="display:none; margin-top:10px;">
+              <label>Subject<input type="text" id="lSubj" value="they" /></label>
+              <label>Object<input type="text" id="lObj" value="them" /></label>
+              <label>Possessive<input type="text" id="lPossAdj" value="their" /></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <h3>Romance</h3>
+            <div class="rowFields">
+              <label>
+                Route
+                <select id="routePref">
+                  <option value="auto" selected>Auto (from identities)</option>
+                  <option value="wlw">Lesbian / WLW</option>
+                  <option value="mlm">Gay / MLM</option>
+                  <option value="straight">Straight</option>
+                  <option value="queer">Queer (open)</option>
+                  <option value="surprise">Surprise me</option>
+                </select>
+              </label>
+              <label>
+                Partner term
+                <select id="partnerTerm">
+                  <option value="auto" selected>Auto (from route)</option>
+                  <option value="partner">Partner</option>
+                  <option value="girlfriend">Girlfriend</option>
+                  <option value="boyfriend">Boyfriend</option>
+                </select>
+              </label>
+            </div>
+            <p class="note" id="routeNote" style="margin:10px 0 0 0;"></p>
+          </div>
+
+          <div class="card">
+            <h3>Extras</h3>
+            <div class="checks">
+              <label><input type="checkbox" id="transBeats" /> Include trans-specific beats (when relevant)</label>
+              <label><input type="checkbox" id="rememberPrefs" checked /> Remember my choices</label>
+            </div>
+            <p class="note" style="margin:10px 0 0 0;">You can reopen Preferences anytime.</p>
+          </div>
+        </div>
+
+        <div class="warn" id="prefsWarn" style="display:none;"></div>
+      </div>
+
+      <div class="modalFooter">
+        <button id="cancelPrefsBtn" type="button" style="display:none;">Cancel</button>
+        <button id="startDefaultBtn" type="button">Use defaults</button>
+        <button id="startBtn" class="primary" type="button">Start</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // Configuration
+    // ============================================================
+    const CONFIG = {
+      title: "Evergreen",
+      pageCount: 25,
+      negativeChance: 0.30,
+      pacing: 1.00,
+
+      names: {
+        female: [
+          "Mara", "Elowen", "Talia", "Nina", "Leona", "Iris", "Carmen", "Zahra", "Kendra", "Noor",
+          "Mae", "Bea", "Yvette", "Lina", "Saffron", "Phoebe", "Elara", "Mira", "Lyra", "Selene",
+          "Vesper", "Anya", "Dahlia", "Faye", "Gwen", "Isla", "Juno", "Kira", "Luna", "Nora",
+          "Ada", "Bellamy", "Calla", "Delphine", "Esme", "Flora", "Gaia", "Hazel", "Indra", "Jade",
+          "Kaia", "Lumi", "Maia", "Nova", "Opal", "Petra", "Rhea", "Selah", "Thea", "Ursa"
+        ],
+        male: [
+          "Jun", "Reese", "Sage", "Rowan", "Skye", "Harper", "Finn", "Arlo", "Caius", "Ezra",
+          "Kael", "Silas", "Jude", "Milo", "Otis", "Felix", "Jasper", "Leo", "Ash", "Beau",
+          "Caleb", "Dante", "Elias", "Flynn", "Gideon", "Hugo", "Ivan", "Julian", "Kit", "Luca",
+          "Atlas", "Bastian", "Cassian", "Dorian", "Emrys", "Forrest", "Grey", "Hollis", "Idris", "Joren",
+          "Koa", "Lian", "Magnus", "Nikolai", "Orion", "Pax", "Quill", "Ronan", "Soren", "Thatcher"
+        ],
+        nonbinary: [
+          "River", "Wren", "Charlie", "Alex", "Quinn", "Sloane", "Emery", "Elliot", "Parker", "Rowan",
+          "Casey", "Jordan", "Taylor", "Morgan", "Skyler", "Phoenix", "Sage", "Remy", "Oakley", "Briar",
+          "Avery", "Blake", "Dakota", "Eden", "Finley", "Grey", "Hayden", "Indigo", "Justice", "Kai",
+          "Aspen", "Blue", "Cedar", "Dusk", "Echo", "Fable", "Gale", "Haven", "Ink", "Journey",
+          "Kestrel", "Lake", "Moss", "North", "Ocean", "Puck", "Quartz", "Rain", "Sol", "True"
+        ]
+      },
+
+      rituals: [
+        "tea and a shared playlist",
+        "a slow walk after dinner to count porch lights",
+        "weekly library returns with a pastry detour",
+        "a tiny craft night with glue, scissors, and quiet concentration",
+        "a weekend farmers' market loop that ended in tired laughter",
+        "morning coffee traded in comfortable silence",
+        "handwritten notes left on mirrors and countertops",
+        "sitting on the floor with backs against the couch, just breathing",
+        "watching street traffic from a favorite window perch",
+        "reading aloud while the other cooked dinner"
+      ],
+
+      hurdles: [
+        "a misunderstanding that grew teeth because fear fed it",
+        "a deadline that turned tenderness into short, sharp sentences",
+        "an ex who returned like a bruise you forgot you had",
+        "distance that made the phone feel like a closed door",
+        "the panic of wanting something real and being seen wanting it",
+        "old wounds that surfaced when exhaustion lowered defenses",
+        "a family member's judgment that arrived uninvited",
+        "money stress that made even kindness feel like pressure",
+        "a job change that swallowed all available energy",
+        "the weight of past relationships that taught the wrong lessons"
+      ]
+    };
+
+    // ============================================================
+    // Storage keys
+    // ============================================================
+    const STORAGE_KEY = "evergreen_save_v4";
+    const PREFS_KEY = "evergreen_prefs_v1";
+    const LAST_SEED_KEY = "evergreen_last_run_seed";
+
+    // ============================================================
+    // RNG with serializable state (Save/Load continuity)
+    // ============================================================
+    function xmur3(str) {
+      let h = 1779033703 ^ str.length;
+      for (let i = 0; i < str.length; i++) {
+        h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+        h = (h << 13) | (h >>> 19);
+      }
+      return function() {
+        h = Math.imul(h ^ (h >>> 16), 2246822507);
+        h = Math.imul(h ^ (h >>> 13), 3266489909);
+        h ^= h >>> 16;
+        return h >>> 0;
+      };
+    }
+
+    function rngStateFromSeed(seedStr) {
+      const seed = xmur3(seedStr);
+      return [seed(), seed(), seed(), seed()];
+    }
+
+    function Rng(a, b, c, d) {
+      this.a = a >>> 0;
+      this.b = b >>> 0;
+      this.c = c >>> 0;
+      this.d = d >>> 0;
+    }
+
+    Rng.prototype.next = function() {
+      this.a >>>= 0; this.b >>>= 0; this.c >>>= 0; this.d >>>= 0;
+      let t = (this.a + this.b) | 0;
+      this.a = this.b ^ (this.b >>> 9);
+      this.b = (this.c + (this.c << 3)) | 0;
+      this.c = (this.c << 21) | (this.c >>> 11);
+      this.d = (this.d + 1) | 0;
+      t = (t + this.d) | 0;
+      this.c = (this.c + t) | 0;
+      return (t >>> 0) / 4294967296;
+    };
+
+    Rng.prototype.getState = function() {
+      return [this.a >>> 0, this.b >>> 0, this.c >>> 0, this.d >>> 0];
+    };
+
+    Rng.prototype.setState = function(st) {
+      this.a = (st?.[0] ?? 0) >>> 0;
+      this.b = (st?.[1] ?? 0) >>> 0;
+      this.c = (st?.[2] ?? 0) >>> 0;
+      this.d = (st?.[3] ?? 0) >>> 0;
+    };
+
+    function makeRngFromSeed(seedStr) {
+      const st = rngStateFromSeed(seedStr);
+      return new Rng(st[0], st[1], st[2], st[3]);
+    }
+
+    function randomSeed() {
+      const buf = new Uint32Array(4);
+      crypto.getRandomValues(buf);
+      return Array.from(buf).map(n => n.toString(16).padStart(8, "0")).join("-");
+    }
+
+    function newRunSeedDifferentFromLast() {
+      let seed = randomSeed();
+      const last = localStorage.getItem(LAST_SEED_KEY);
+      while (seed === last) seed = randomSeed();
+      localStorage.setItem(LAST_SEED_KEY, seed);
+      return seed;
+    }
+
+    // ============================================================
+    // Character / pronouns
+    // ============================================================
+    function identityDefaults(identity) {
+      switch (identity) {
+        case "woman": return { genderCategory: "woman", isTrans: false, pronounPreset: "she" };
+        case "man": return { genderCategory: "man", isTrans: false, pronounPreset: "he" };
+        case "nonbinary": return { genderCategory: "nonbinary", isTrans: false, pronounPreset: "they" };
+        case "trans_woman": return { genderCategory: "woman", isTrans: true, pronounPreset: "she" };
+        case "trans_man": return { genderCategory: "man", isTrans: true, pronounPreset: "he" };
+        default: return { genderCategory: "nonbinary", isTrans: false, pronounPreset: "they" };
+      }
+    }
+
+    function pronounsFromPreset(preset, custom) {
+      if (preset === "she") return { subj:"she", obj:"her", possAdj:"her", poss:"hers", refl:"herself" };
+      if (preset === "he") return { subj:"he", obj:"him", possAdj:"his", poss:"his", refl:"himself" };
+      if (preset === "they") return { subj:"they", obj:"them", possAdj:"their", poss:"theirs", refl:"themself" };
+      if (preset === "custom") {
+        const subj = (custom?.subj || "they").trim();
+        const obj = (custom?.obj || "them").trim();
+        const possAdj = (custom?.possAdj || "their").trim();
+        const poss = (custom?.poss || "").trim() || (possAdj.toLowerCase() === "his" ? "his" : possAdj.toLowerCase() === "her" ? "hers" : "theirs");
+        const refl = (custom?.refl || "").trim() || (subj.toLowerCase() === "she" ? "herself" : subj.toLowerCase() === "he" ? "himself" : "themself");
+        return { subj, obj, possAdj, poss, refl };
+      }
+      return pronounsFromPreset("they");
+    }
+
+    function cap(s) {
+      if (!s) return s;
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    function verbForSubj(subj, singularForm, pluralForm) {
+      if ((subj || "").toLowerCase() === "they") return pluralForm;
+      return singularForm;
+    }
+
+    function computeRouteFromGenderCats(nCat, lCat) {
+      if (nCat === "woman" && lCat === "woman") return "wlw";
+      if (nCat === "man" && lCat === "man") return "mlm";
+      if ((nCat === "woman" && lCat === "man") || (nCat === "man" && lCat === "woman")) return "straight";
+      return "queer";
+    }
+
+    function routeLabel(route) {
+      if (route === "wlw") return "WLW";
+      if (route === "mlm") return "MLM";
+      if (route === "straight") return "Straight";
+      return "Queer";
+    }
+
+    // ============================================================
+    // Helpers
+    // ============================================================
+    function pick(arr, rng) {
+      return arr[Math.floor(rng.next() * arr.length)];
+    }
+
+    function pickAndRemove(arr, rng) {
+      if (!arr.length) throw new Error("Pool exhausted.");
+      const i = Math.floor(rng.next() * arr.length);
+      return arr.splice(i, 1)[0];
+    }
+
+    function getNamePool(identity) {
+      if (identity === "woman" || identity === "trans_woman") return CONFIG.names.female;
+      if (identity === "man" || identity === "trans_man") return CONFIG.names.male;
+      return CONFIG.names.nonbinary;
+    }
+
+    function pickName(pool, rng, excludeName = null) {
+      let filtered = pool;
+      if (excludeName) {
+        filtered = pool.filter(n => n !== excludeName);
+      }
+      if (filtered.length === 0) return pool[Math.floor(rng.next() * pool.length)]; // Fallback
+      return filtered[Math.floor(rng.next() * filtered.length)];
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function fill(s, ctx) {
+      return s.replace(/\{([A-Z_]+)\}/g, (_, k) => (k in ctx ? String(ctx[k]) : `{${k}}`));
+    }
+
+    function chooseNegative(rng, pageIdx, negativeChance, pacing) {
+      const t = pageIdx / (CONFIG.pageCount - 1);
+      const center = Math.max(0.26, Math.min(0.62, 0.50 / pacing));
+      const spread = 0.22;
+      const weight = Math.exp(-Math.pow((t - center) / spread, 2));
+      return rng.next() < (negativeChance * weight);
+    }
+
+    function parseTagged(text) {
+      const m = String(text).match(/^\[([a-zA-Z0-9_, -]+)\]\s*(.*)$/);
+      if (!m) return { t: String(text), tags: ["universal"] };
+      const tags = m[1].split(",").map(s => s.trim()).filter(Boolean);
+      return { t: m[2], tags: tags.length ? tags : ["universal"] };
+    }
+
+    function candidateAllowed(cand, route, prefs, flags) {
+      const tags = cand.tags || ["universal"];
+      const has = (tag) => tags.includes(tag);
+
+      const transTagged = has("transNarrator") || has("transLove") || has("t4t") || has("transBeat");
+      if (transTagged) {
+        if (!prefs.includeTransBeats) return false;
+        if (has("t4t") && !(flags.narrIsTrans && flags.loveIsTrans)) return false;
+        if (has("transNarrator") && !flags.narrIsTrans) return false;
+        if (has("transLove") && !flags.loveIsTrans) return false;
+      }
+
+      if (has("universal")) return true;
+      if (has(route)) return true;
+      if (has("queer")) return true;
+
+      return false;
+    }
+
+    // ============================================================
+    // Story pools (25 pages × 5 slots; 10 candidates per slot)
+    // ============================================================
+    function buildStoryPools() {
+      return [
+        // Page 1
+        {
+          s1:{soft:[
+            "I went in to kill ten minutes and ended up losing the rest of the evening.",
+            "I stepped inside to get out of the rain, and the warmth smelled like paper and burnt coffee.",
+            "I followed a hand-lettered sign down a hallway and pretended I wasn't looking for anything in particular.",
+            "I had no plan except not to go straight home.",
+            "I wandered in with my hands still cold, trying to look like I belonged to the world.",
+            "The door was unlocked and I took it as permission, though I hadn't asked for any.",
+            "I found myself inside before I'd decided to enter, as if my feet had their own opinion.",
+            "The threshold felt significant only after I'd crossed it - another small choice I couldn't unchoose.",
+            "I walked in carrying the weight of an afternoon I didn't want to examine yet.",
+            "Something drew me through the entrance like a hand on my back, gentle but insistent."
+          ],hard:[]},
+          s2:{soft:[
+            "I noticed {LOVE_NAME} before I had a reason, the way you noticed a light left on behind a closed door.",
+            "{LOVE_NAME} stood near the window, not performing; the simplicity of {LOVE_POSS_ADJ} presence unsettled me.",
+            "{LOVE_NAME} watched the room like {LOVE_SUBJ} was waiting for someone to choose honesty.",
+            "I saw {LOVE_NAME} in the reflection of glass and then again in real life, and both versions looked more awake than I felt.",
+            "{LOVE_NAME} looked up at the wrong moment and still managed to make it feel like the right one.",
+            "{LOVE_NAME} moved through the space with an ease I couldn't name - not confidence exactly, more like belonging without apology.",
+            "There was something about {LOVE_NAME} that made the room feel quieter, or maybe I just stopped hearing the noise.",
+            "{LOVE_NAME} held a book with the careful attention some people reserved for fragile things, and I wondered what else {LOVE_SUBJ} treated gently.",
+            "I caught myself staring and looked away too late; {LOVE_NAME} had already registered my attention with a flicker of recognition.",
+            "{LOVE_NAME} existed in that space like {LOVE_SUBJ} wasn't performing for anyone, and the lack of performance felt radical."
+          ],hard:[]},
+          s3:{soft:[
+            "I had spent years making my wanting small enough to pass through other people's lives unnoticed.",
+            "Desire had always felt like evidence, and I had learned to hide evidence.",
+            "[wlw] I had spent years rehearsing \"friend\" around women I wanted, like the word could keep me safe.",
+            "[mlm] I had spent years rehearsing \"friend\" around men I wanted, like the word could keep me safe.",
+            "[queer] I had spent years trying to want in a way that didn't make anyone flinch, including me.",
+            "My history had taught me to confuse invisibility with survival, and the lesson stuck like tar.",
+            "I carried the weight of old shame like a coat I'd forgotten I was wearing until someone pointed it out.",
+            "[wlw] Every crush on a girl had been a secret I practiced swallowing until it felt like choking was normal.",
+            "[mlm] Every crush on a boy had been a secret I practiced swallowing until it felt like choking was normal.",
+            "[queer] I had learned to translate my heart into acceptable language, and translation always meant loss."
+          ],hard:[]},
+          s4:{soft:[
+            "We almost collided; we did the polite choreography, but the laughter came too fast to be only polite.",
+            "A flyer slipped; our fingers met over paper, and my pulse acted like it recognized a threat.",
+            "I moved to the same narrow space at the same time as {LOVE_NAME}, and we paused like two people hearing the same distant sound.",
+            "We reached for the same thing, and the shared motion felt like a small mistake made on purpose.",
+            "We both stepped back to let the other pass, and neither of us moved quite quickly enough.",
+            "Our shoulders brushed in the doorway and I felt the contact like static, brief and unmistakable.",
+            "I dropped something and {LOVE_NAME} bent to retrieve it at the same moment I did, our hands hovering over the same object.",
+            "We navigated the narrow aisle with the awkward precision of strangers trying not to touch, and failing.",
+            "The accidental nearness created a small electricity I pretended not to notice.",
+            "We occupied the same small territory and neither of us seemed willing to be the first to yield."
+          ],hard:[]},
+          s5:{soft:[
+            "{LOVE_NAME} said hello without weighing me, and the tension in my neck let go on its own.",
+            "I answered, and my voice sounded like it came from a room I didn't usually unlock.",
+            "The greeting should have been nothing; it wasn't.",
+            "We exchanged a few words that should have died right there; they didn't.",
+            "I turned as if to leave and found myself still facing {LOVE_NAME}, like my body had missed the exit.",
+            "{LOVE_NAME} spoke my name as a question, and I realized I'd been holding my breath.",
+            "I replied with something ordinary and felt my heart betray the ordinariness with its rhythm.",
+            "The conversation started as reflex - polite noise - and then became something I wanted to continue.",
+            "{LOVE_NAME} smiled and it wasn't performative; the authenticity unsettled something in me.",
+            "I heard myself laugh at something {LOVE_SUBJ} said, and the sound came from a part of me I'd been ignoring."
+          ],hard:[]}
+        },
+
+        // Page 2
+        {
+          s1:{soft:[
+            "We talked the way people did when they expected the moment to end, and then it didn't.",
+            "The conversation stayed ordinary until it drifted into that thin place where honesty slipped out.",
+            "It began as small talk and turned into something else without announcing the change.",
+            "We spoke softly, as if loudness might break whatever had started forming between us.",
+            "I kept waiting for a reason to leave; the reasons didn't arrive.",
+            "Words arrived easily, which was unusual; I normally had to budget sentences like rationed goods.",
+            "The exchange felt less like an interview and more like two people discovering a shared language.",
+            "We lingered in the doorway of goodbye without crossing the threshold.",
+            "Time bent around us in that quiet way it did when you forgot to keep measuring it.",
+            "I realized I'd stopped thinking about my escape route, which meant I'd already stayed too long."
+          ],hard:[]},
+          s2:{soft:[
+            "{LOVE_NAME} asked what I was looking for, not like a clerk, more like {LOVE_SUBJ} expected my uncertainty to matter.",
+            "{LOVE_NAME} made a comment that wasn't quite a joke, and I laughed like my body had answered before my mind approved.",
+            "{LOVE_NAME} offered a suggestion and then waited, as if my answer was something worth hearing.",
+            "{LOVE_NAME} listened in a way that didn't feel like gathering ammunition.",
+            "{LOVE_NAME} looked at me as if {LOVE_SUBJ} was trying to understand me rather than categorize me.",
+            "{LOVE_NAME} tilted {LOVE_POSS_ADJ} head slightly when I spoke, like my words deserved the full architecture of {LOVE_POSS_ADJ} attention.",
+            "When I fumbled for the right word, {LOVE_NAME} didn't rush to fill the silence with {LOVE_POSS_ADJ} own interpretation.",
+            "{LOVE_NAME} responded to what I'd actually said instead of what {LOVE_SUBJ} expected me to mean.",
+            "{LOVE_NAME} asked a follow-up question that proved {LOVE_SUBJ} had been listening with intention, not just waiting for {LOVE_POSS_ADJ} turn.",
+            "{LOVE_NAME} nodded in a way that felt like witnessing rather than judging."
+          ],hard:[]},
+          s3:{soft:[
+            "I was used to being interpreted; with {LOVE_NAME}, I felt un-interpreted, left intact.",
+            "I thought of all the rooms where I had rehearsed myself into something easier to swallow, and I felt tired all over again.",
+            "I had always mistaken attention for danger, but {LOVE_POSS_ADJ} attention didn't ask for payment.",
+            "I felt the old reflex to be charming, and watched it fail to activate.",
+            "For a minute, I didn't feel like a problem to solve.",
+            "My usual performance felt unnecessary here, like armor I'd worn so long I'd forgotten it wasn't skin.",
+            "I noticed the absence of the familiar tension in my shoulders - the tension that came from constant self-editing.",
+            "Being seen without being fixed felt foreign enough to be frightening.",
+            "I realized I'd been holding my personality like a weapon for so long, I'd forgotten what it felt like to set it down.",
+            "The relief of not having to translate myself was almost painful in its unfamiliarity."
+          ],hard:[]},
+          s4:{soft:[
+            "{LOVE_NAME} mentioned {RITUAL} like it was nothing, and I stored the detail like a key I might need later.",
+            "When I offered an opinion, {LOVE_NAME} didn't correct me; {LOVE_SUBJ} set {LOVE_POSS_ADJ} thoughts beside mine.",
+            "{LOVE_NAME} pointed at a flyer and said {LOVE_SUBJ} was thinking of going, like {LOVE_SUBJ} was admitting to a harmless secret.",
+            "I asked a question I didn't mean to ask, and {LOVE_NAME} answered as if it was safe to answer.",
+            "We stood too long by the same shelf, using the room as an excuse not to move away.",
+            "{LOVE_NAME} showed me something {LOVE_SUBJ} liked without performing the liking, just sharing it.",
+            "I shared an opinion I normally kept private, and {LOVE_NAME} received it without making it smaller.",
+            "We discovered a small overlap in our tastes and treated it like finding quarters in an old coat.",
+            "{LOVE_NAME} mentioned a favorite place with the tenderness people reserved for sacred things.",
+            "I found myself wanting to know more, not to collect information, but to understand the shape of {LOVE_POSS_ADJ} days."
+          ],hard:[]},
+          s5:{soft:[
+            "When we separated, I kept walking while some part of me stayed behind, listening for {LOVE_POSS_ADJ} footsteps.",
+            "{LOVE_NAME} waved goodbye with the calm of someone who didn't treat connection like a trick.",
+            "Outside, the air felt thinner; I noticed it because my body missed {LOVE_OBJ} already.",
+            "I went home with nothing in my hands and something loud in my chest.",
+            "I told myself it had been nothing and didn't believe myself.",
+            "The goodbye felt temporary in a way that suggested return, not ending.",
+            "I walked away slowly, giving the universe time to call me back if it wanted to.",
+            "{LOVE_NAME} said my name once more before I left, and it sounded different in {LOVE_POSS_ADJ} voice - like {LOVE_SUBJ} was learning its weight.",
+            "I turned the corner and immediately wanted to go back, like I'd forgotten something important.",
+            "My apartment waited for me the way it always did, but I arrived feeling like a different version of myself had left it."
+          ],hard:[]}
+        },
+
+        // Page 3
+        {
+          s1:{soft:[
+            "The next time I saw {LOVE_NAME}, it looked accidental, but my body reacted like it had been expecting a scheduled return.",
+            "A few days later, I found {LOVE_NAME} again, like the city had a loop it wanted me to walk.",
+            "I ran into {LOVE_NAME} the way you ran into a song you'd forgotten you loved: sudden, familiar, inconvenient.",
+            "I kept thinking I wouldn't see {LOVE_NAME} again, and then {LOVE_SUBJ} was there, as if the thought had summoned {LOVE_OBJ}.",
+            "Seeing {LOVE_NAME} again felt less like luck and more like consequence.",
+            "I turned a corner and there was {LOVE_NAME}, and my first thought was relief disguised as surprise.",
+            "We crossed paths in the most ordinary way, and ordinary felt like a miracle I didn't deserve.",
+            "I spotted {LOVE_NAME} before {LOVE_SUBJ} saw me, and I had three seconds to decide whether I was brave.",
+            "The second encounter arrived too soon to be coincidence and too perfectly timed to be anything else.",
+            "I found {LOVE_NAME} in the last place I expected, which meant I'd been expecting {LOVE_OBJ} everywhere."
+          ],hard:[]},
+          s2:{soft:[
+            "{LOVE_NAME} offered to walk with me for \"just a block,\" and the offer extended itself like a sentence refusing to end.",
+            "{LOVE_NAME} fell into step beside me as if we'd already agreed to share the sidewalk.",
+            "{LOVE_NAME} pointed out a shortcut, and I followed, not because I needed directions, but because I wanted {LOVE_POSS_ADJ} voice to keep happening.",
+            "We walked without deciding to, and the street gave us plausible deniability.",
+            "{LOVE_NAME} asked where I was headed and didn't laugh when I admitted I wasn't sure.",
+            "Our pace synchronized without effort, like our bodies had been practicing in secret.",
+            "{LOVE_NAME} suggested we take the long way, and I agreed before considering what that meant.",
+            "We navigated the sidewalk together, adjusting for each other in small, unconscious ways.",
+            "{LOVE_NAME} slowed when I slowed, sped up when I did, as if we were tethered.",
+            "The walk became less about destination and more about prolonging the proximity."
+          ],hard:[]},
+          s3:{soft:[
+            "I admitted I'd been trying to join something - anything - because my solitude had started echoing back at me.",
+            "It came out that being new made me feel like a guest in my own life.",
+            "I told {LOVE_NAME} I'd been circling the same days, waiting for them to change shape on their own.",
+            "I said too much and then realized {LOVE_NAME} wasn't punishing me for it.",
+            "I confessed I didn't know many people here, and the confession sounded like a bruise being touched.",
+            "I revealed the particular loneliness of not belonging anywhere specific yet.",
+            "Words spilled out about feeling transparent in crowds, and {LOVE_NAME} listened like it wasn't oversharing.",
+            "I described the exhaustion of always being the new person, and my voice cracked slightly.",
+            "I mentioned how hard it was to build connection from nothing, and the admission felt like undressing.",
+            "I shared the weight of starting over, and {LOVE_NAME} nodded like {LOVE_SUBJ} understood the architecture of that weight."
+          ],hard:[]},
+          s4:{soft:[
+            "{LOVE_NAME} said, almost offhand, 'I can go with you,' and the kindness landed heavier than it should have.",
+            "{LOVE_NAME} offered to come along, and I didn't ask why {LOVE_SUBJ} was being generous with {LOVE_POSS_ADJ} time.",
+            "A passing car sprayed the curb; {LOVE_NAME} moved closer without thinking, and I felt something in me flinch and then ease.",
+            "{LOVE_NAME} named a day {LOVE_SUBJ} was free and waited for my answer like my answer mattered.",
+            "I heard myself say yes before I could sand the edges off the impulse.",
+            "{LOVE_NAME} pulled out {LOVE_POSS_ADJ} phone to check {LOVE_POSS_ADJ} calendar, treating my presence like a priority.",
+            "The offer came without conditions attached, which made it harder to dismiss as politeness.",
+            "{LOVE_NAME} made a joke about being terrible at the thing we'd do together, and it felt like honesty wrapped in humor.",
+            "I watched {LOVE_NAME} actually rearrange plans to accommodate me, and something tightened in my chest.",
+            "{LOVE_NAME} said \"we\" like it was already decided, and I didn't correct {LOVE_OBJ}."
+          ],hard:[]},
+          s5:{soft:[
+            "When we split, my chest felt slightly misaligned, as if something had shifted and refused to shift back.",
+            "I went home carrying nothing new except the sensation of being seen and not corrected.",
+            "Later, I replayed the sound of {LOVE_POSS_ADJ} voice until it stopped sounding like a threat.",
+            "I told myself I was being dramatic and still checked my phone too often.",
+            "{LOVE_NAME} followed me in a quiet way, like a smell caught in fabric.",
+            "The goodbye lasted longer than necessary, neither of us quite willing to break the spell.",
+            "I walked away feeling lighter and heavier at once, like I'd traded one weight for another.",
+            "My apartment felt different when I returned, as if {LOVE_NAME} had rearranged something fundamental.",
+            "I sat in the dark for a while, not sad, just processing the shape of newness.",
+            "Sleep came slowly, my mind replaying moments like checking to make sure they were real."
+          ],hard:[]}
+        },
+
+        // Page 4
+        {
+          s1:{soft:[
+            "We exchanged numbers with the careful casualness of people pretending it meant nothing either way.",
+            "There was a pause where either of us could have left; neither of us did.",
+            "Outside, the moment hovered, as if it didn't know which direction to fall.",
+            "I almost said goodbye and kept talking instead, as if conversation were a place to hide.",
+            "We reached that awkward edge where politeness usually ended things, and somehow we didn't end.",
+            "The conversation found another topic, then another, as if neither of us wanted to be the one who let go.",
+            "We stood in the space between parting and staying, and the indecision felt significant.",
+            "I kept inventing reasons to linger, and {LOVE_NAME} didn't call me on it.",
+            "The natural ending kept arriving and we kept missing it, maybe on purpose.",
+            "We traded phone numbers like we were signing a contract neither of us had read yet."
+          ],hard:[]},
+          s2:{soft:[
+            "{LOVE_NAME} typed my name correctly on the first try, and the precision felt like a kind of care.",
+            "{LOVE_NAME} handed me {LOVE_POSS_ADJ} phone without ceremony; I pretended my hands weren't unsteady.",
+            "{LOVE_NAME} asked for my number like it was ordinary, and I resented the ease of it because I wanted it to be easy too.",
+            "{LOVE_NAME} read my contact back to confirm it, and hearing my name in {LOVE_POSS_ADJ} mouth made my stomach tighten.",
+            "{LOVE_NAME} saved me as if {LOVE_SUBJ} expected to keep me.",
+            "I watched {LOVE_NAME} add my details with deliberate care, like each field mattered.",
+            "{LOVE_NAME} asked how I spelled my name, not because it was difficult, but because {LOVE_SUBJ} wanted to get it right.",
+            "The exchange felt formal and intimate at once, like we were making something official.",
+            "I fumbled with my phone and {LOVE_NAME} waited patiently, which made me fumble more.",
+            "{LOVE_NAME} showed me {LOVE_POSS_ADJ} screen with my name in it, like proof of something."
+          ],hard:[]},
+          s3:{soft:[
+            "I had a history of wanting quietly, the way you wanted when you suspected wanting was a mistake.",
+            "[wlw] I remembered the years I called it admiration, because wanting women sounded like something I'd be punished for.",
+            "[mlm] I remembered the years I called it admiration, because wanting men sounded like something I'd be punished for.",
+            "I had trained myself to disappear at the first hint of attachment; my body tried to follow the old script.",
+            "I'd learned to treat my own desire like contraband - something to deny if questioned.",
+            "My past had taught me that wanting visibly made you vulnerable, so I'd practiced invisibility.",
+            "Every previous crush had come with a built-in exit plan, already half-prepared for failure.",
+            "I'd spent so long pretending not to care that caring felt like breaking a sacred rule.",
+            "The muscle memory of self-protection was strong; it wanted me to retreat now, before attachment set in.",
+            "I recognized the old pattern: want something, minimize the wanting, prepare for disappointment."
+          ],hard:[]},
+          s4:{soft:[
+            "{LOVE_NAME} said, \"Text me if you want,\" and the word want didn't sound like a threat when {LOVE_SUBJ} said it.",
+            "I said yes before I could turn it into something vague enough to escape later.",
+            "{LOVE_NAME} smiled as if {LOVE_SUBJ} already knew I'd say yes, and I didn't know whether to trust that.",
+            "I asked what day worked and hated how much I cared about {LOVE_POSS_ADJ} answer.",
+            "{LOVE_NAME} mentioned a place we could go and waited like {LOVE_SUBJ} wasn't afraid of being refused.",
+            "{LOVE_NAME} suggested specifics - a time, a place - and the concreteness made it harder to dismiss.",
+            "I heard myself agreeing to plans and felt my defenses scramble to catch up.",
+            "{LOVE_NAME} offered options, making it clear the invitation was real, not just politeness.",
+            "The way {LOVE_NAME} asked felt different: genuine, hopeful, without pressure.",
+            "I committed to a day and immediately second-guessed it, then committed again anyway."
+          ],hard:[]},
+          s5:{soft:[
+            "Later, {LOVE_POSS_ADJ} first message arrived plain and small, and I read it until it stopped looking unreal.",
+            "When I replied, I didn't scrub the warmth from my sentence, and nothing collapsed because of it.",
+            "My phone lit up, and for a second I was sixteen again, bracing; it was just {LOVE_NAME} saying hi.",
+            "I answered too quickly and then stared at the screen like it might bite.",
+            "The exchange was nothing, and that was the problem; nothing shouldn't have mattered this much.",
+            "I kept my phone near me all evening, checking it more often than I wanted to admit.",
+            "{LOVE_POSS_ADJ} text sat in my inbox like a small, warm thing I wanted to protect.",
+            "I drafted three versions of my response before sending the simplest one.",
+            "The notification made my heart jump, which felt ridiculous and also perfectly accurate.",
+            "I saved {LOVE_POSS_ADJ} contact with just {LOVE_POSS_ADJ} name, no emojis, keeping it real."
+          ],hard:[]}
+        },
+
+        // Page 5
+        {
+          s1:{soft:[
+            "Our first deliberate hangout stayed small, and the smallness made it possible to breathe.",
+            "We met under the excuse of {RITUAL}, and the excuse was thin enough to let truth show through.",
+            "I arrived early and hated myself for it, like punctuality had betrayed how much I wanted {LOVE_NAME} there.",
+            "We kept it simple - an hour, a plan, a clear ending - like a controlled burn.",
+            "It was the kind of meeting you could describe as casual if you were lying.",
+            "We chose a neutral spot, somewhere neither of us had history with, which felt like starting clean.",
+            "I rehearsed conversation topics on the way there and forgot all of them the moment {LOVE_NAME} smiled.",
+            "The plan was coffee for an hour; we stayed three and barely noticed.",
+            "I told myself it didn't matter if it went badly, then realized how much it mattered.",
+            "We met with the visible awkwardness of two people pretending this wasn't a threshold."
+          ],hard:[]},
+          s2:{soft:[
+            "{LOVE_NAME} listened like {LOVE_SUBJ} was trying to understand, not appraise, and I found myself speaking slower.",
+            "{LOVE_NAME} laughed without taking anything from me, and I didn't know what to do with that.",
+            "{LOVE_NAME} asked a question and actually waited for the answer, even when my answer took time.",
+            "{LOVE_POSS_ADJ} attention felt steady, not hungry, and it made my guard look foolish.",
+            "{LOVE_NAME} looked at me directly, and I realized how rarely I let anyone do that.",
+            "{LOVE_NAME} remembered something I'd mentioned in passing and brought it up naturally, like my words had weight.",
+            "When I trailed off mid-sentence, {LOVE_NAME} didn't finish it for me; {LOVE_SUBJ} waited for me to find my way back.",
+            "{LOVE_NAME} shared something vulnerable without making it feel like a test.",
+            "I watched {LOVE_NAME} get genuinely excited about something small, and the enthusiasm was contagious.",
+            "{LOVE_NAME} made space for silence without treating it like failure."
+          ],hard:[]},
+          s3:{soft:[
+            "I noticed I wasn't performing; the realization made my throat tighten on the way home.",
+            "Softness had always felt like bait; with {LOVE_NAME}, it sat there unarmed.",
+            "I kept expecting the moment where I'd be made to feel stupid; it never arrived.",
+            "I felt a familiar urge to self-sabotage and watched it pass without acting on it.",
+            "Being liked without conditions made me suspicious of my own relief.",
+            "I realized I'd been holding my breath metaphorically for years, and only now noticed how tired it made me.",
+            "The absence of performance felt naked at first, then surprisingly restful.",
+            "I caught myself being honest by accident and didn't immediately regret it.",
+            "For the first time in a long time, I didn't leave an interaction mentally cataloging my mistakes.",
+            "I let my guard slip and the world didn't end; that felt revolutionary and terrifying."
+          ],hard:[]},
+          s4:{soft:[
+            "A silence showed up and neither of us strangled it with jokes; it became a quiet agreement.",
+            "We disagreed about something trivial and it didn't crack the room; it only proved we were real.",
+            "We shared a small complaint and I felt my body lean toward {LOVE_OBJ} without permission.",
+            "I noticed the way {LOVE_NAME} held {LOVE_POSS_ADJ} cup with both hands, like {LOVE_SUBJ} was keeping something warm on purpose.",
+            "{LOVE_NAME} told a story that should have been forgettable, and I couldn't forget it anyway.",
+            "We discovered we both hated the same small thing and bonded over the specificity of the annoyance.",
+            "{LOVE_NAME} showed me a photo and I leaned in closer, our shoulders touching briefly.",
+            "We split something to share and the casual intimacy of it felt significant.",
+            "I made {LOVE_NAME} laugh - really laugh - and stored the sound like treasure.",
+            "The conversation found its own rhythm, and I stopped trying to control where it went."
+          ],hard:[]},
+          s5:{soft:[
+            "When the night ended, it ended without ceremony - just a clear, unforced \"again.\"",
+            "I walked home thinking: if this was friendship, it wasn't the kind that demanded I shrink.",
+            "I didn't want to text {LOVE_NAME} the moment I got home; I did anyway.",
+            "I tried to name what I felt and failed; I settled for \"good night\" and meant it too much.",
+            "The city looked the same on the walk back, and I felt like I didn't.",
+            "We parted with a hug that lasted just long enough to feel intentional.",
+            "{LOVE_NAME} said \"this was nice\" like {LOVE_SUBJ} meant it, and I believed {LOVE_OBJ}.",
+            "I replayed the entire evening on the walk home, examining it like something precious and fragile.",
+            "The goodbye felt temporary, which was new - usually goodbyes felt permanent by default.",
+            "I went to bed early and couldn't sleep, too alive with the residue of connection."
+          ],hard:[]}
+        },
+
+        // Page 6
+        {
+          s1:{soft:[
+            "By the next week, we already had an inside joke, and it bothered me how quickly a person could become a fixture.",
+            "Our messages found a rhythm I hadn't authorized, a thin thread through the day.",
+            "I started noticing time in relation to {LOVE_NAME}: before {LOVE_POSS_ADJ} text, after {LOVE_POSS_ADJ} laugh, the hours in between.",
+            "We got into the habit of speaking in fragments, and the fragments began to feel like shelter.",
+            "The friendship took shape the way weather did - slowly, then all at once.",
+            "Days began to organize themselves around the possibility of hearing from {LOVE_NAME}.",
+            "I found myself editing my thoughts into sentences I wanted to share with {LOVE_OBJ}.",
+            "The routine of our contact became something I protected without naming it protection.",
+            "I started measuring my days by whether I'd talked to {LOVE_NAME} yet.",
+            "Our exchanges became less about information and more about maintaining a current."
+          ],hard:[]},
+          s2:{soft:[
+            "{LOVE_NAME} sent voice notes with quiet smiles in them; I replayed them when my apartment sounded too much like itself.",
+            "{LOVE_NAME} remembered a detail I'd forgotten I'd said, and something in me moved like an animal waking.",
+            "{LOVE_NAME} forwarded a song and told me to listen to the bridge; the bridge ruined my afternoon.",
+            "{LOVE_NAME} texted as if {LOVE_SUBJ} wasn't afraid of being the first one to reach out.",
+            "{LOVE_NAME} asked how my day was and seemed to mean it, which made the question feel unfamiliar.",
+            "{LOVE_NAME} shared small victories like they mattered, and I realized I wanted them to matter.",
+            "{LOVE_NAME} sent me pictures of things {LOVE_SUBJ} thought I'd like, and {LOVE_SUBJ} was always right.",
+            "{LOVE_NAME} typed in a way that felt conversational, like we were in the same room.",
+            "{LOVE_NAME} used my name in texts more than necessary, and each time felt deliberate.",
+            "{LOVE_NAME} never made me feel like I was bothering {LOVE_OBJ}, even when I worried I was."
+          ],hard:[]},
+          s3:{soft:[
+            "I charged my phone earlier, as if readiness could disguise itself as practicality.",
+            "I had been trained to want privately; wanting in daylight felt like learning to breathe differently.",
+            "My mind tried to classify {LOVE_NAME} as safe or dangerous, and couldn't decide, which made me watchful.",
+            "I told myself it was just friendship and then caught my body lying.",
+            "I felt less alone and resented how much I needed that.",
+            "I noticed myself smiling at notifications before I even read them.",
+            "I started curating my experiences as stories I could tell {LOVE_NAME} later.",
+            "I felt the old fear whisper that this couldn't last, and I argued back for once.",
+            "I realized I was investing in something without a guaranteed return, and doing it anyway.",
+            "I caught myself hoping, which felt dangerous and necessary in equal measure."
+          ],hard:[]},
+          s4:{soft:[
+            "{LOVE_NAME} wrote, \"My favorite part of today was you,\" and I stared until my body stopped bracing for a punchline.",
+            "I used a nickname I hadn't meant to invent, and {LOVE_NAME} took it without making me regret the impulse.",
+            "{LOVE_NAME} sent a photo of something ordinary and somehow it felt like an offering.",
+            "I almost typed something honest and deleted it, then typed it again and sent it anyway.",
+            "{LOVE_POSS_ADJ} messages were not dramatic; they were consistent, which was more frightening.",
+            "{LOVE_NAME} texted goodnight even on days we'd already talked, like {LOVE_SUBJ} wanted the last word to be kind.",
+            "{LOVE_NAME} remembered things I'd said weeks ago and brought them back like gifts.",
+            "{LOVE_NAME} sent me updates on small ongoing sagas in {LOVE_POSS_ADJ} life, including me in the continuity.",
+            "{LOVE_NAME} asked my opinion on trivial things, making me feel consulted rather than tolerated.",
+            "{LOVE_NAME} double-texted without apology, and I loved the lack of performance in it."
+          ],hard:[]},
+          s5:{soft:[
+            "Something in me began to root in the dark, slow and stubborn, not asking permission from the season.",
+            "I caught myself smiling at nothing, which was to say I was smiling at the thought of {LOVE_OBJ}.",
+            "At night, I remembered {LOVE_POSS_ADJ} hands more than {LOVE_POSS_ADJ} face, and I didn't know what that meant.",
+            "The days felt less sharp, but the edges of my own fear became easier to see.",
+            "I didn't tell anyone about {LOVE_NAME}; I didn't have language that didn't sound like an excuse.",
+            "I started sleeping better, as if my nervous system had decided {LOVE_NAME} was evidence of safety.",
+            "I felt hope like a low-grade fever, persistent and slightly uncomfortable.",
+            "I stopped trying to logic my way out of caring and just let it happen.",
+            "I realized attachment had already occurred, quietly, while I'd been busy defending against it.",
+            "I whispered {LOVE_POSS_ADJ} name once, alone, just to hear how it sounded in my own voice."
+          ],hard:[]}
+        },
+
+        // Page 7
+        {
+          s1:{soft:[
+            "A bad day arrived without plot, only accumulation, and it made me feel like an object left out in weather.",
+            "The week tilted and I felt the reflex to vanish so nobody would have to deal with my need.",
+            "I woke up already tired, like my body had been working night shift in my sleep.",
+            "Something minor went wrong and my patience fell apart like cheap fabric.",
+            "I carried an invisible heaviness all afternoon and pretended it wasn't there.",
+            "The day felt like wearing shoes that didn't fit, every step a small negotiation with pain.",
+            "I moved through hours like swimming in clothes, every gesture weighted.",
+            "I felt fragile in a way that made me angry at my own fragility.",
+            "Everything required more energy than I had, and I resented the basic math of existing.",
+            "I wanted to disappear not dramatically but practically, like an unanswered email."
+          ],hard:[]},
+          s2:{soft:[
+            "{LOVE_NAME} noticed anyway; {LOVE_POSS_ADJ} attention didn't demand explanation, it simply arrived and stayed.",
+            "{LOVE_NAME} asked if I wanted company, and the question didn't sound like pity.",
+            "{LOVE_NAME} showed up with the kind of calm that made me ashamed of how frantic I felt.",
+            "{LOVE_NAME} didn't try to fix anything; {LOVE_SUBJ} just made space, and space was rarer than solutions.",
+            "{LOVE_NAME} listened to my bad mood without treating it like a crime.",
+            "{LOVE_NAME} texted to check in without making it feel like surveillance.",
+            "{LOVE_NAME} offered practical help - food, distraction, silence - and let me choose.",
+            "{LOVE_NAME} didn't tell me it would be okay; {LOVE_SUBJ} just stayed present while it wasn't.",
+            "{LOVE_NAME} validated my frustration without requiring me to perform gratitude for the validation.",
+            "{LOVE_NAME} treated my struggle as temporary without dismissing it as trivial."
+          ],hard:[]},
+          s3:{soft:[
+            "I tried to apologize for being heavy, and {LOVE_NAME} said I didn't have to earn gentleness.",
+            "I realized I'd been treating care like a transaction; {LOVE_NAME} treated it like a place you could stand without paying.",
+            "I had expected my sadness to make me less lovable; {LOVE_NAME} didn't act like it changed anything.",
+            "Being met without punishment made me feel exposed in a new way.",
+            "I wanted to run and didn't, which felt like a small victory and a small terror.",
+            "I noticed how I'd learned to make myself small when hurting, and how {LOVE_NAME} didn't require smallness.",
+            "I felt the old shame try to speak, and {LOVE_NAME}'s presence made it sound less authoritative.",
+            "I realized I'd been performing okayness for so long I'd forgotten what actual okay felt like.",
+            "I let myself be seen in my mess, and {LOVE_NAME} didn't flinch.",
+            "I understood, briefly, that maybe I didn't have to be perfect to be wanted."
+          ],hard:[]},
+          s4:{soft:[
+            "We did almost nothing together, and the almost nothing worked on me like medicine.",
+            "{LOVE_NAME} told me a story about {LOVE_POSS_ADJ} own spirals, and the honesty was blunt enough to be believable.",
+            "We sat shoulder to shoulder and looked at our phones like teenagers avoiding feelings.",
+            "{LOVE_NAME} made tea, and the kettle's hiss filled the room where my thoughts had been.",
+            "I said something ugly about myself and {LOVE_NAME} didn't let it become true.",
+            "We watched something mindless on TV and the mindlessness was exactly what I needed.",
+            "{LOVE_NAME} asked what would help and then actually did the thing I asked for.",
+            "We existed in the same space without pressure to perform okay, and the relief was physical.",
+            "{LOVE_NAME} matched my energy instead of trying to lift it, which somehow lifted it anyway.",
+            "I cried a little and {LOVE_NAME} handed me tissues without commentary."
+          ],hard:[]},
+          s5:{soft:[
+            "When I got home, the apartment felt less like exile and more like a room I was allowed to occupy.",
+            "Later {LOVE_NAME} texted, \"You made it through,\" and for once I believed it without arguing.",
+            "I slept hard, like my body had finally decided it could trust the night.",
+            "The next morning, I didn't feel better, but I felt less alone inside the feeling.",
+            "I realized I hadn't once tried to disappear while {LOVE_NAME} was there.",
+            "I woke up with the memory of {LOVE_NAME}'s steadiness like a hand on my back.",
+            "I felt tentatively grateful, not for the bad day, but for learning I could survive it witnessed.",
+            "I noticed my resilience looked different when it had company.",
+            "I texted {LOVE_NAME} thank you and meant it in a way that felt new.",
+            "I understood that sometimes love was just showing up, and {LOVE_NAME} had shown up."
+          ],hard:[]}
+        },
+
+        // Page 8
+        {
+          s1:{soft:[
+            "We signed up for something small together - something community-shaped, something with a schedule.",
+            "A volunteer shift became our excuse, and the excuse turned into a habit.",
+            "We agreed to help with something minor, and the minor thing became a shared afternoon.",
+            "{LOVE_NAME} invited me into a room of {LOVE_POSS_ADJ} life, and I stepped in carefully, expecting to be corrected.",
+            "We decided to show up somewhere at the same time, which felt more intimate than it should have.",
+            "We chose a commitment that gave us a reason to see each other that wasn't just wanting to.",
+            "We found a project that needed hands, and our hands learned to work in proximity.",
+            "We joined something that met weekly, and the rhythm became a framework.",
+            "We picked an activity neither of us was good at, which made us equals in inexperience.",
+            "We found a third thing to focus on, and the third thing made us easier with each other."
+          ],hard:[]},
+          s2:{soft:[
+            "Working next to {LOVE_NAME}, I learned {LOVE_POSS_ADJ} steadiness was made of attention and a refusal to humiliate anyone.",
+            "{LOVE_NAME} solved problems without making me feel stupid, and I realized how many rooms I'd learned to shrink in.",
+            "{LOVE_NAME} moved through the work with quiet competence; I felt myself relax around {LOVE_OBJ} like my body recognized safety.",
+            "{LOVE_NAME} asked my opinion on something small and waited as if it mattered.",
+            "{LOVE_NAME} praised me without sounding surprised that I could be useful.",
+            "{LOVE_NAME} made mistakes without drama, normalizing imperfection in a way that freed me.",
+            "{LOVE_NAME} collaborated like partnership was default, not a favor {LOVE_SUBJ} was granting me.",
+            "{LOVE_NAME} caught my errors gently, framing them as adjustments rather than failures.",
+            "{LOVE_NAME} shared the work equally without keeping score.",
+            "{LOVE_NAME} treated the task seriously without making it precious, which made it fun."
+          ],hard:[]},
+          s3:{soft:[
+            "I thought about the older versions of me who tried to be \"normal\" like it was a job, and I felt grief with a dull edge.",
+            "I realized how often I'd treated my own attraction like a prank my brain played on me.",
+            "[wlw] I had swallowed pronouns and whole desires for years, and thinking about women in daylight still made me flinch.",
+            "[mlm] I had swallowed pronouns and whole desires for years, and thinking about men in daylight still made me flinch.",
+            "[queer] I had swallowed pronouns and whole desires for years, and thinking about myself clearly still felt like breaking a rule.",
+            "I remembered the exhaustion of constant translation, turning my truth into something palatable.",
+            "I thought about all the times I'd practiced straight, like straightness was a language I could learn fluently enough to pass.",
+            "I felt the old anger at how much energy I'd spent on camouflage instead of living.",
+            "I realized I'd been apologizing for existing in a certain way without anyone even asking me to.",
+            "I noticed the weight of years of hiding and wondered what I could have done with all that energy."
+          ],hard:[]},
+          s4:{soft:[
+            "[wlw] {LOVE_NAME} said {LOVE_SUBJ} dated women, plainly, without apology; the air changed in a way I couldn't undo.",
+            "[mlm] {LOVE_NAME} said {LOVE_SUBJ} dated men, plainly, without apology; the air changed in a way I couldn't undo.",
+            "[straight] {LOVE_NAME} talked about dating like it wasn't a performance, and I realized I'd always treated it like one.",
+            "[queer] {LOVE_NAME} named what {LOVE_SUBJ} wanted with calm accuracy, and it made me feel braver by proximity.",
+            "[transLove] {LOVE_NAME} mentioned being trans the way people mentioned a scar: not as tragedy, just as truth.",
+            "{LOVE_NAME} spoke about {LOVE_POSS_ADJ} identity casually, like it was simply information rather than confession.",
+            "{LOVE_NAME} referenced an ex with pronouns that told me everything I'd been afraid to ask.",
+            "{LOVE_NAME} shared a story that made {LOVE_POSS_ADJ} orientation clear, and I felt my own possibilities expand.",
+            "{LOVE_NAME} wore {LOVE_POSS_ADJ} truth like comfortable clothes, and I envied the ease.",
+            "{LOVE_NAME} mentioned community with belonging in {LOVE_POSS_ADJ} voice, and I felt my own isolation sharpen."
+          ],hard:[]},
+          s5:{soft:[
+            "I didn't offer a label in return; I offered my attention, which was the first honest thing I knew how to give.",
+            "We finished the shift with paint on our hands and a quiet between us that felt newly allowed.",
+            "I went home thinking about what {LOVE_NAME} had said - not the words, but the permission behind them.",
+            "[transNarrator] I almost told {LOVE_NAME} I was trans and stopped; I hated that I still treated truth like a confession.",
+            "[t4t] Something in the conversation loosened between us, a relief that didn't need explaining.",
+            "I felt a door open in my chest, not wide, just enough to let different air in.",
+            "I drove home in silence and let my thoughts unspool without forcing them into acceptable shapes.",
+            "I realized {LOVE_NAME} had given me something by being unguarded, and I wanted to reciprocate.",
+            "I felt less alone in a specific way, like I'd found someone who spoke my dialect.",
+            "I understood that {LOVE_NAME}'s honesty was a gift, and receiving it changed me slightly."
+          ],hard:[]}
+        },
+
+        // Page 9
+        {
+          s1:{soft:[
+            "Closeness arrived first by accident, then by repetition, then by choice.",
+            "One evening the rain insisted; we shared an umbrella, and the narrow world beneath it felt private.",
+            "We stood too close over a task and neither of us moved away to fix it.",
+            "A crowded sidewalk forced us shoulder to shoulder, and my body reacted like it had been starved of contact.",
+            "I reached for something at the same time {LOVE_NAME} did and the moment didn't resolve into politeness.",
+            "We found ourselves in proximity more often, and the proximity started feeling intentional.",
+            "We sat closer than necessary on a bench with room to spread out.",
+            "We navigated a narrow doorway and the brief press of bodies felt significant.",
+            "We leaned over the same screen and I felt {LOVE_POSS_ADJ} warmth like weather.",
+            "We ended up touching by accident so often it stopped feeling like accident."
+          ],hard:[]},
+          s2:{soft:[
+            "{LOVE_NAME} smelled faintly of soap and cold air, and the combination made my head go quiet.",
+            "I noticed how {LOVE_NAME} laughed up close - lower, less careful.",
+            "I noticed a small scar on {LOVE_POSS_ADJ} hand and wanted its story too badly.",
+            "{LOVE_POSS_ADJ} sleeve brushed my wrist and the touch landed like a bruise I didn't mind having.",
+            "When {LOVE_NAME} leaned in to point something out, I felt my breath change before I could stop it.",
+            "I memorized the exact shade of {LOVE_POSS_ADJ} eyes without meaning to.",
+            "I noticed the way {LOVE_NAME} bit {LOVE_POSS_ADJ} lip when concentrating, and the observation felt illicit.",
+            "I caught the rhythm of {LOVE_POSS_ADJ} breathing and found my own adjusting to match.",
+            "I saw a freckle I'd never noticed before and felt absurdly possessive of the knowledge.",
+            "I studied {LOVE_POSS_ADJ} hands and wondered what they'd feel like holding mine on purpose."
+          ],hard:[]},
+          s3:{soft:[
+            "I told myself not to romanticize, but the part of me that survived adolescence didn't speak in disclaimers.",
+            "I collected details as if proof of safety could be hoarded.",
+            "I had always been good at pretending touch didn't matter; my body refused to cooperate.",
+            "I tried to label the feeling as friendship, and the label slid off.",
+            "It wasn't that I wanted {LOVE_NAME} to want me; it was that I wanted {LOVE_OBJ} to see me without turning away.",
+            "I felt desire like a low hum I couldn't unhear once I'd noticed it.",
+            "I tried to be rational about proximity and failed completely.",
+            "I noticed myself inventing reasons to be closer, then feeling ashamed of the invention.",
+            "I wanted to touch {LOVE_OBJ} casually and didn't trust casual to stay casual.",
+            "I felt adolescent and ancient at once, wanting with a confusion that spanned decades."
+          ],hard:[]},
+          s4:{soft:[
+            "A hug happened, and it lasted a fraction longer than politeness; the extra time felt like a question asked with arms.",
+            "{LOVE_POSS_ADJ} hand brushed mine and didn't retreat; my heart behaved badly, and I let it.",
+            "We sat with our knees almost touching, and the near-contact was louder than conversation.",
+            "{LOVE_NAME} bumped my shoulder lightly, like an accident {LOVE_SUBJ} trusted me not to punish.",
+            "When {LOVE_NAME} passed me something, our fingers lingered like we'd both forgotten the rules.",
+            "We walked close enough that our hands kept brushing, and neither of us adjusted the distance.",
+            "{LOVE_NAME} tucked my hair behind my ear without asking, and the gesture stopped time briefly.",
+            "We shared a scarf and the intimacy of it made me dizzy.",
+            "{LOVE_NAME} grabbed my hand to pull me through a crowd and didn't let go immediately after.",
+            "We hugged goodbye and I felt {LOVE_POSS_ADJ} heartbeat, which seemed unfairly intimate."
+          ],hard:[]},
+          s5:{soft:[
+            "When we parted, the air felt empty in a way I recognized from old winters.",
+            "I walked home with my hands in my pockets and my thoughts trailing behind me like a loose thread.",
+            "I kept replaying the moment of touch, trying to make it mean less; it kept meaning itself.",
+            "I stared at my own hands later, as if they could tell me what I'd done wrong.",
+            "That night, sleep didn't come easily; it circled me like an animal deciding whether I was safe.",
+            "I lay awake cataloging every point of contact like evidence I might need later.",
+            "I felt the ghost of {LOVE_POSS_ADJ} touch like a phantom limb.",
+            "I wanted to text {LOVE_OBJ} and couldn't think of words that weren't too much.",
+            "I ached in a way that felt both painful and precious.",
+            "I fell asleep touching my own wrist where {LOVE_SUBJ} had touched it, trying to remember the pressure."
+          ],hard:[]}
+        },
+
+        // Page 10
+        {
+          s1:{soft:[
+            "The realization arrived quietly and then everywhere, like dampness you didn't notice until the wall gave itself away.",
+            "I caught myself planning my day around {LOVE_NAME} without admitting it was planning.",
+            "I started listening for {LOVE_POSS_ADJ} name in rooms where {LOVE_SUBJ} wasn't, which felt like a kind of haunting.",
+            "I woke up thinking about {LOVE_NAME} and felt briefly furious at my own brain.",
+            "At some point, denial stopped feeling like protection and started feeling like hunger.",
+            "I noticed I thought about {LOVE_NAME} in every quiet moment, like my mind defaulted to {LOVE_OBJ}.",
+            "I caught myself smiling at memories of {LOVE_OBJ} and felt caught by my own face.",
+            "I realized {LOVE_NAME} had become the person I measured other people against.",
+            "I started every story with {LOVE_POSS_ADJ} name and had to edit myself back to pronouns.",
+            "I felt the truth sitting in my chest like something living that wanted out."
+          ],hard:[]},
+          s2:{soft:[
+            "{LOVE_NAME} talked about wanting something steady, and I heard myself wanting to be part of the steadiness.",
+            "{LOVE_NAME} smiled at me across a table and I felt my life shift, not dramatically, just enough to change the direction of falling.",
+            "{LOVE_NAME} asked what I wanted and I almost lied out of habit.",
+            "When {LOVE_NAME} looked at me too long, I felt exposed in a way that didn't feel dangerous.",
+            "I realized my jealousy wasn't about other people; it was about how much I wanted to be chosen.",
+            "{LOVE_NAME} mentioned the future casually and I wanted to be in it.",
+            "{LOVE_NAME} said something kind and I felt it land in the exact place I kept my hope.",
+            "{LOVE_NAME} touched my arm while talking and my whole nervous system paid attention.",
+            "{LOVE_NAME} laughed at something I said and I felt proud in a way I hadn't since childhood.",
+            "{LOVE_NAME} asked if I was free next week and the question felt like a rope I wanted to grab."
+          ],hard:[]},
+          s3:{soft:[
+            "I remembered how I'd called my desire \"admiration\" so it wouldn't become a sentence with consequences.",
+            "I realized how often I'd treated my own feelings like something to outgrow.",
+            "I'd lived as if my attraction were a private glitch; it didn't feel like a glitch anymore.",
+            "[wlw] I thought about all the men I'd tried to want correctly, and how badly I'd wanted the trying to count as love.",
+            "[mlm] I thought about all the women I'd tried to want correctly, and how badly I'd wanted the trying to count as love.",
+            "I felt the old scripts trying to run and chose to interrupt them.",
+            "I noticed how much energy I'd spent pretending to be confused about who I wanted.",
+            "I realized desire wasn't the problem; shame about desire was the problem.",
+            "I felt angry at all the time I'd lost to fear of this exact feeling.",
+            "I understood that I'd known all along and had been waiting for permission that would never come."
+          ],hard:[]},
+          s4:{soft:[
+            "I caught myself imagining {LOVE_POSS_ADJ} mouth and then pretended I hadn't.",
+            "I thought about kissing {LOVE_OBJ} and felt my stomach drop like I'd stepped off a curb too late.",
+            "I realized I was afraid of being wrong, and even more afraid of being right.",
+            "[transNarrator] I wondered if I could be wanted in the body I lived in now, and hated that the question still had teeth.",
+            "I wanted {LOVE_NAME} to reach for me, and I hated myself for how simple that was.",
+            "I imagined {LOVE_POSS_ADJ} hands on me and had to sit down.",
+            "I fantasized about casual intimacy more than dramatic romance - hands held, foreheads touched.",
+            "I wanted to know what {LOVE_NAME} looked like first thing in the morning.",
+            "I thought about being chosen deliberately and the thought made me light-headed.",
+            "I wanted {LOVE_NAME} in every tense - past, present, future, conditional."
+          ],hard:[]},
+          s5:{soft:[
+            "In the morning, shame didn't arrive. Fear did, but it felt like the price of being awake to myself.",
+            "I didn't feel enlightened; I felt cornered by my own honesty.",
+            "I kept moving through the day like normal, and everything sounded slightly off, like audio out of sync.",
+            "I understood, finally, that I couldn't go back to not knowing.",
+            "I stopped arguing with myself and started listening, which was worse at first.",
+            "I let myself want openly, at least in private, and the relief was staggering.",
+            "I said it out loud to my empty apartment: \"I like {LOVE_OBJ}.\" The walls didn't collapse.",
+            "I wrote it down in my journal and the permanence felt both terrifying and necessary.",
+            "I stopped trying to logic my way out of feeling and just felt.",
+            "I woke up knowing, and the knowing changed the shape of the day."
+          ],hard:[]}
+        },
+
+        // Page 11
+        {
+          s1:{soft:[
+            "Jealousy arrived like a bad smell I couldn't locate, and I hated myself for having it at all.",
+            "I felt a sharpness in my chest and pretended it was indigestion.",
+            "I watched {LOVE_NAME} talk to someone else and tried not to count the seconds.",
+            "A small panic bloomed in me, not because {LOVE_NAME} did anything wrong, but because my past trained me to expect punishment for wanting.",
+            "I found myself rehearsing indifference, like indifference could keep me from being seen.",
+            "I felt territorial about someone who wasn't mine and the illogic made me furious.",
+            "I watched {LOVE_NAME} be charming with someone else and felt childish and raw.",
+            "I noticed my mood sour when {LOVE_NAME} mentioned other friends, and I hated the smallness of it.",
+            "I felt possessive and had no right to possession, which made the feeling sharper.",
+            "I wanted to be the person {LOVE_NAME} texted first and felt pathetic for wanting it."
+          ],hard:[]},
+          s2:{soft:[
+            "{LOVE_NAME} mentioned someone from before - an almost, a maybe - and I kept my face calm while my thoughts went feral.",
+            "{LOVE_NAME} said an ex's name and my mind filled in a story I hadn't been told.",
+            "I heard {LOVE_NAME} laugh at someone else's joke and felt my stomach drop for no good reason.",
+            "{LOVE_NAME} said {LOVE_SUBJ} was busy this weekend and I took it personally because that was my favorite way to be hurt.",
+            "I watched {LOVE_NAME} text, screen turned away, and hated myself for wanting to look.",
+            "{LOVE_NAME} talked about someone with affection and I cataloged the affection for threat level.",
+            "{LOVE_NAME} got a call and stepped away, and I invented narratives in the silence.",
+            "{LOVE_NAME} mentioned making plans with someone else and I felt excluded from a space I'd never occupied.",
+            "{LOVE_NAME} smiled at their phone and I wanted to know who put that smile there.",
+            "{LOVE_NAME} brought up an inside joke I wasn't part of and I felt the edges of belonging."
+          ],hard:[]},
+          s3:{soft:[
+            "I didn't have the right to claim what hadn't been offered; my heart drafted claims anyway, in invisible ink.",
+            "I was embarrassed by how much reassurance I wanted, embarrassed by the hunger to be chosen on purpose.",
+            "[wlw] I remembered being the girl who watched other girls and called it envy so nobody would notice.",
+            "[mlm] I remembered being the boy who watched other boys and called it envy so nobody would notice.",
+            "I felt the old reflex to leave first, to make abandonment a choice instead of a sentence handed down.",
+            "I wanted to be special to {LOVE_NAME} and hated how much that wanting revealed.",
+            "I felt young and stupid, like I'd learned nothing from previous heartbreaks.",
+            "I recognized this feeling from every unrequited want I'd ever swallowed.",
+            "I felt transparent in my need and tried to clothe it in casualness.",
+            "I wanted a guarantee I knew didn't exist, and the wanting made me reckless."
+          ],hard:[]},
+          s4:{soft:[
+            "I made a joke to cover it, and it landed wrong, like I set down a glass too hard.",
+            "I went quiet for a moment too long and I could feel fear walking back and forth in the gap.",
+            "I asked a question too sharply and regretted it as soon as it left my mouth.",
+            "I acted casual and felt my face betray me anyway.",
+            "I nodded through {LOVE_NAME}'s explanation and barely heard it over my own thoughts.",
+            "I made an excuse to leave early, punishing us both for my discomfort.",
+            "I got sarcastic when I meant to be sincere, and the sarcasm built a wall.",
+            "I pulled back slightly, testing whether {LOVE_NAME} would notice the distance.",
+            "I texted something neutral when I meant to be warm, censoring myself mid-sentence.",
+            "I felt my smile go tight and hoped {LOVE_NAME} would read it as tiredness."
+          ],hard:[]},
+          s5:{soft:[
+            "{LOVE_NAME} asked, gently, where I'd gone, and the gentleness made me want to confess everything at once.",
+            "I didn't give {LOVE_NAME} the whole truth yet, but I stayed in the room with it; staying felt like a small betrayal of my old habits.",
+            "{LOVE_NAME} didn't accuse me; {LOVE_SUBJ} waited, and the waiting made my defenses look childish.",
+            "I apologized for my tone and hated how much relief I felt when {LOVE_NAME} didn't pull away.",
+            "We changed the subject, but the feeling stayed, lodged under my ribs like a stone.",
+            "{LOVE_NAME} touched my hand briefly, a check-in, and I almost broke.",
+            "{LOVE_NAME} said we could talk about it if I wanted, no pressure, and the no-pressure made it possible.",
+            "I said I was fine and {LOVE_NAME} looked at me like {LOVE_SUBJ} was giving me time to try again.",
+            "{LOVE_NAME} didn't push, which somehow made me want to explain more than pushing would have.",
+            "I felt {LOVE_NAME} offering me an exit and I chose, barely, to stay."
+          ],hard:[]}
+        },
+
+        // Page 12
+        {
+          s1:{soft:[
+            "The first real misstep was small enough to be cruel: two tired people, one assumption, and a sentence that landed wrong.",
+            "We misunderstood each other in the most human way, and the room tightened around it.",
+            "A remark from someone else put us under a spotlight we hadn't agreed to stand in.",
+            "I heard my own voice turn careful, and I hated how familiar careful felt.",
+            "A minor disagreement grew edges, mostly because we were both afraid.",
+            "We had our first real friction, and it felt like proof that I'd been right to be scared.",
+            "Something small became something sharp between us, neither of us willing to be first to soften.",
+            "We talked past each other for five minutes before realizing we were agreeing violently.",
+            "A joke landed wrong and the wrongness echoed longer than the joke.",
+            "We discovered a place where our communication failed, and the failure felt personal."
+          ],hard:[
+            "{HURDLE} arrived with perfect timing, and we both spoke like we were trying not to bleed on the floor.",
+            "A stressful week pulled old defenses up through the carpet, and I went numb in the familiar way.",
+            "Something outside our control pressed on us until we started speaking in shorthand and wounds.",
+            "{HURDLE} made every text feel like a test, and I failed the first few on purpose.",
+            "The day became a trap door, and I fell back into an older version of myself.",
+            "{HURDLE} hit us sideways and we both reverted to our worst habits.",
+            "External pressure found the weakest point between us and pressed.",
+            "{HURDLE} arrived and suddenly we were fighting about everything except the actual problem.",
+            "The stress made us both sharp, and we used that sharpness on each other.",
+            "{HURDLE} reminded me that good things could still be taken away."
+          ]},
+          s2:{soft:[
+            "I started editing myself again on instinct, like honesty was a luxury I couldn't afford.",
+            "{LOVE_NAME} got careful, and I recognized the careful as an old language: safety by saying less.",
+            "I watched {LOVE_NAME}'s face close slightly and pretended I hadn't noticed.",
+            "I wanted to ask for reassurance and couldn't stand the sound of my own need.",
+            "We kept talking, but the words started arriving wrapped in foam.",
+            "We both started choosing words like walking through a room in the dark.",
+            "I felt us both reaching for scripts, anything to avoid raw honesty.",
+            "We got polite with each other, which felt more dangerous than anger.",
+            "I noticed the warmth leaving our exchanges, degree by degree.",
+            "We started saying fine when we meant not fine, and pretending we didn't notice."
+          ],hard:[
+            "{LOVE_NAME} canceled plans with a short message, and my fear translated it into abandonment before reason could intervene.",
+            "Our texts turned functional; it felt like someone turned the music down and left us with the hum of appliances.",
+            "{LOVE_NAME} didn't reply for hours, and I built a whole exit strategy out of the silence.",
+            "I read {LOVE_POSS_ADJ} tone wrong and then punished {LOVE_OBJ} for what I imagined.",
+            "The distance between our messages felt like a hallway that kept lengthening.",
+            "I watched the read receipts and felt my anxiety build entire narratives.",
+            "{LOVE_NAME} responded in short sentences and I took each period as punctuation on our ending.",
+            "We stopped using emojis and the absence felt like mourning.",
+            "I sent a message that went unanswered and spent three hours deciding what it meant.",
+            "The silence between us grew teeth."
+          ]},
+          s3:{soft:[
+            "I lay awake rehearsing the moment I could have chosen differently, and the rehearsal felt like penance.",
+            "I remembered being told my feelings were \"just a phase,\" and my body went cold as if it still believed them.",
+            "I tried to convince myself I didn't care; my pulse refused to cooperate.",
+            "I felt my pride rise like a shield and knew it would only protect my loneliness.",
+            "I hated how quickly I went back to being the person who swallowed everything.",
+            "I felt all my old certainties return: I was too much, I'd misread everything, this was always going to end.",
+            "I started pre-grieving, which was easier than hoping.",
+            "I told myself I'd been stupid to trust this, and the self-recrimination was almost comforting in its familiarity.",
+            "I felt myself closing like a fist around the idea that I was fundamentally unlovable.",
+            "I wanted to run before I could be left, which was my oldest reflex."
+          ],hard:[
+            "I almost convinced myself I'd imagined everything, because imagined intimacy couldn't leave you.",
+            "I drafted a message that sounded like closure - clean, controlled - and stared at it like a door I could lock from the inside.",
+            "I told myself it was safer to quit while I was ahead, and recognized the lie as fear in good clothing.",
+            "I rehearsed an apology and then refused to send it, like punishment would make me feel less powerless.",
+            "I started counting the ways this could end, as if counting could prevent it.",
+            "I wrote a breakup text I had no reason to send, just to have it ready.",
+            "I practiced being fine without {LOVE_NAME}, like rehearsing for a play I hoped would never open.",
+            "I felt the old story take over: everyone leaves, I'm always the one left.",
+            "I started emotionally packing, distancing myself before I could be abandoned.",
+            "I felt my heart trying to save itself by leaving first."
+          ]},
+          s4:{soft:[
+            "In the morning, I decided pride wasn't shelter; it was only a way to be lonely with a straighter spine.",
+            "I realized I'd rather be clumsy and real than polite and gone.",
+            "I saw how easily I could lose {LOVE_NAME} and understood I didn't want the kind of safety that required me to vanish.",
+            "I stopped waiting to feel brave and chose to act anyway.",
+            "I admitted, privately, that I was afraid and that fear was not a plan.",
+            "I decided that being vulnerable once more was better than being safe and alone.",
+            "I realized my pride was just fear in a nicer outfit.",
+            "I understood that silence would kill this slower but just as dead.",
+            "I chose discomfort over disappearance.",
+            "I decided to risk being honest instead of being right."
+          ],hard:[
+            "I didn't send the closure message, but I carried it like a blade I promised myself not to use.",
+            "I gave myself one day to choose repair, and the day felt like walking with glass in my shoe.",
+            "I almost let silence do the breaking-up for me, which would have been the laziest cruelty.",
+            "I sat with my phone in my hand and hated how much my future felt like it depended on a vibration.",
+            "I chose to show up instead of disappearing, which felt like stepping into traffic.",
+            "I deleted the goodbye message and wrote a different one: \"Can we talk?\"",
+            "I decided that if this was going to end, it wouldn't be because I ran first.",
+            "I chose to be the person who tried, even if trying meant being hurt worse.",
+            "I stopped protecting myself and started protecting us.",
+            "I made the call I was terrified to make."
+          ]},
+          s5:{soft:[
+            "I texted, \"Can we talk?\" and it felt like stepping onto thin ice on purpose.",
+            "I wrote, \"I miss you,\" without turning it into something vague enough to deny.",
+            "I asked if we could walk and talk, because sitting still felt impossible.",
+            "I said I didn't want this to harden, and meant it like an apology and a plea.",
+            "I reached out first, not because I was noble, but because I was tired of being scared.",
+            "I sent three words: \"I'm sorry. Please?\"",
+            "I called instead of texting because my voice could carry what words couldn't.",
+            "I asked for a chance to try again, and the asking felt like standing naked.",
+            "I offered honesty instead of defense, which was the only thing I had left.",
+            "I chose {LOVE_NAME} over my fear of {LOVE_NAME}."
+          ],hard:[
+            "I sent, \"I'm scared,\" because it was the first true thing that didn't disguise itself as sarcasm.",
+            "I wrote, \"I don't want to lose you,\" and waited like waiting was a prayer I didn't believe in but kept performing.",
+            "I admitted I'd been spiraling, and the admission tasted like metal and relief.",
+            "I asked if {LOVE_SUBJ} could call, and then stared at the screen like it could answer for {LOVE_OBJ}.",
+            "I told {LOVE_OBJ} the truth in one sentence and then wanted to swallow the phone.",
+            "I texted, \"I fucked up and I'm sorry,\" and felt my hands shake.",
+            "I sent a voice note because I needed {LOVE_OBJ} to hear that I meant it.",
+            "I wrote everything I was afraid of and hit send before I could stop myself.",
+            "I asked if we could start over, knowing I had no right to ask.",
+            "I begged, which I'd sworn I'd never do, and found I didn't care about the swearing."
+          ]}
+        },
+
+        // Page 13
+        {
+          s1:{soft:[
+            "We talked while walking, as if movement could keep the fear from settling in one place.",
+            "We met somewhere neutral, and my nerves made the streetlights look harsher than they were.",
+            "I arrived prepared to defend myself and found {LOVE_NAME} looking tired instead of angry.",
+            "We chose a route with no destination, which made it easier to keep going.",
+            "I expected a fight and got quiet instead - the kind that meant {LOVE_NAME} was still here.",
+            "We sat on a bench in the cold because neither of us wanted to be in a room that could trap us.",
+            "We picked a public place, which made drama harder and honesty easier.",
+            "We started walking and let the movement carry what words couldn't yet.",
+            "We gave ourselves an hour and no agenda except showing up.",
+            "We met in daylight, which made everything feel less catastrophic."
+          ],hard:[]},
+          s2:{soft:[
+            "{LOVE_NAME} let me finish without interrupting; the silence {LOVE_SUBJ} gave me wasn't punishment, it was room.",
+            "{LOVE_NAME} admitted {LOVE_SUBJ} sometimes ran when things began to matter, like distance could keep {LOVE_OBJ} from being hurt first.",
+            "{LOVE_NAME} listened with {LOVE_POSS_ADJ} face open, and I felt my excuses die on my tongue.",
+            "{LOVE_NAME} didn't deny my feelings; {LOVE_SUBJ} asked where they came from.",
+            "{LOVE_NAME} said {LOVE_SUBJ} had been scared too, and the admission made the air less sharp.",
+            "{LOVE_NAME} apologized for {LOVE_POSS_ADJ} part without deflecting onto mine.",
+            "{LOVE_NAME} said {LOVE_SUBJ} understood, and I believed {LOVE_OBJ}.",
+            "{LOVE_NAME} admitted {LOVE_SUBJ} didn't have all the answers either.",
+            "{LOVE_NAME} met my honesty with {LOVE_POSS_ADJ} own instead of with judgment.",
+            "{LOVE_NAME} said the word scared out loud, and it made my own fear feel less shameful."
+          ],hard:[]},
+          s3:{soft:[
+            "I named what I'd felt - jealousy, shame, longing - without dressing it up, and my honesty came out shaking but intact.",
+            "I told {LOVE_NAME} I was tired of being a ghost in my own life, especially with someone who made me feel visible.",
+            "I admitted I'd been trying to leave first because leaving first had always been safer than being left.",
+            "I said I didn't know how to want without turning it into a punishment, and I watched {LOVE_NAME} take that in gently.",
+            "I apologized for the ways I'd made fear {LOVE_NAME}'s problem.",
+            "I explained my history without using it as an excuse.",
+            "I told {LOVE_NAME} I cared more than I knew how to say, and the saying felt like surgery.",
+            "I admitted I'd been testing {LOVE_OBJ}, seeing if {LOVE_SUBJ} would stay when I got difficult.",
+            "I said I was sorry for assuming the worst instead of asking.",
+            "I told {LOVE_NAME} what I needed, which was harder than apologizing."
+          ],hard:[]},
+          s4:{soft:[
+            "{LOVE_NAME} apologized in a way that repaired instead of performing; {LOVE_SUBJ} did the work and didn't ask for applause.",
+            "{LOVE_NAME} said {LOVE_SUBJ} didn't want to be careful with me forever, and I heard in it a willingness to stay when staying was hard.",
+            "{LOVE_NAME} offered an explanation without using it as a shield.",
+            "{LOVE_NAME} told me what {LOVE_SUBJ} needed next time, and asking for needs sounded like a new language.",
+            "We made a small agreement: to ask instead of assume, to return instead of vanish.",
+            "{LOVE_NAME} said {LOVE_SUBJ} wanted to try if I did, and the simplicity felt revolutionary.",
+            "{LOVE_NAME} promised to tell me when {LOVE_SUBJ} needed space instead of just taking it.",
+            "{LOVE_NAME} asked what repair looked like to me, which no one had ever asked before.",
+            "{LOVE_NAME} said we could go slow, and I felt my shoulders drop.",
+            "{LOVE_NAME} held my hand across the table and it felt like an answer."
+          ],hard:[]},
+          s5:{soft:[
+            "We hugged, and it felt like agreement instead of accident.",
+            "I went home exhausted from truth, but lighter, as if something inside me had stopped holding its breath.",
+            "The apology didn't erase the bruise, but it stopped it from becoming an infection.",
+            "Later, {LOVE_NAME}'s text was simple - \"Are you okay?\" - and I realized I wanted to answer honestly.",
+            "For the first time, repair didn't feel like humiliation; it felt like construction.",
+            "We walked back toward each other instead of away, and the direction mattered.",
+            "I slept better than I had in days, knowing we'd chosen to stay.",
+            "I woke up and the first thing I felt was relief instead of dread.",
+            "The fight didn't break us; it showed us where we needed reinforcement.",
+            "I understood that conflict wasn't the end; running from conflict was the end."
+          ],hard:[]}
+        },
+
+        // Page 14
+        {
+          s1:{soft:[
+            "After repair came tenderness, and tenderness changed the stakes: it made my fear feel reasonable and my hope feel reckless.",
+            "We laughed and then the laughter faded into a silence that wasn't empty; it was listening.",
+            "The week smoothed out, but the closeness made everything feel louder.",
+            "We spent an evening together that looked ordinary from the outside and felt dangerous from the inside.",
+            "Things got easier, which made me suspicious; I didn't trust ease yet.",
+            "We rebuilt slowly, testing the new foundation with care.",
+            "We were gentler with each other, and the gentleness felt like a shared project.",
+            "We gave each other more room and somehow ended up closer.",
+            "We moved through days with new awareness of what we could lose.",
+            "We treated each other like something valuable and breakable, because we were."
+          ],hard:[]},
+          s2:{soft:[
+            "{LOVE_NAME} looked at me as if {LOVE_SUBJ} was deciding whether to step closer, and my body answered before my mind negotiated.",
+            "I caught {LOVE_POSS_ADJ} glance at my mouth; {LOVE_SUBJ} looked away too quickly, like the thought had teeth.",
+            "{LOVE_POSS_ADJ} attention lingered on me the way a hand lingered on a doorknob: deciding.",
+            "{LOVE_NAME} stood close, and I noticed the smallest tremor in {LOVE_POSS_ADJ} breath.",
+            "{LOVE_NAME} reached toward me and stopped, like {LOVE_SUBJ} didn't want to take what I hadn't offered.",
+            "{LOVE_NAME} touched my face briefly, checking if I was real.",
+            "{LOVE_NAME} looked at me and I felt seen in a way that made my pulse visible.",
+            "{LOVE_NAME} said my name differently, with weight behind it.",
+            "{LOVE_NAME} leaned in and then hesitated, and the hesitation felt like respect.",
+            "{LOVE_NAME} asked with {LOVE_POSS_ADJ} eyes before {LOVE_POSS_ADJ} hands asked anything."
+          ],hard:[]},
+          s3:{soft:[
+            "I felt grief for my younger self - the one who believed I had to be less in order to be kept.",
+            "I realized my fear wasn't about {LOVE_NAME}; it was about the history in my body.",
+            "I wondered how many years I'd spent avoiding this exact kind of moment.",
+            "[wlw] I thought about all the ways I'd tried to turn wanting women into something harmless, and how exhausted that made me.",
+            "[transNarrator] I remembered every time my body was treated like a debate, and I hated that the memory still tried to steer me.",
+            "I felt the weight of every time I'd been told I was wrong for wanting this.",
+            "I noticed how I'd learned to make myself small before moments of intimacy.",
+            "I realized I was still bracing for rejection even as {LOVE_NAME} moved closer.",
+            "I felt old shame try to speak and told it to wait outside.",
+            "I understood that my fear and my wanting were both real, and I had to choose which one to follow."
+          ],hard:[]},
+          s4:{soft:[
+            "In a doorway, I tucked {LOVE_POSS_ADJ} hair behind {LOVE_POSS_ADJ} ear and we both went still, startled by how intimate a small gesture could be.",
+            "{LOVE_NAME} asked if it was okay, and the question felt like a new kind of safety built from care instead of guessing.",
+            "We leaned in and stopped with a breath between us, like we were both listening for consent from the air.",
+            "{LOVE_POSS_ADJ} fingers hovered near my wrist; I nodded once, and the nod felt louder than words.",
+            "A near-kiss hung there, unfinished, and I felt it for hours afterward.",
+            "We almost kissed and the almost felt more significant than many actual kisses I'd had.",
+            "{LOVE_NAME} touched my jaw and my whole face turned toward the touch like a plant toward light.",
+            "We stood close enough to share breath and the sharing felt monumental.",
+            "{LOVE_NAME} asked \"Can I?\" and waited, and the waiting made me brave.",
+            "We held the moment between us like something fragile we both wanted to protect."
+          ],hard:[]},
+          s5:{soft:[
+            "We didn't kiss, but I left with the shape of the almost-kiss stamped in my memory like light on film.",
+            "Something interrupted us and we stepped back with careful smiles, as if we'd been caught holding fire.",
+            "On the walk home, my mouth felt haunted by a thing that hadn't happened.",
+            "I didn't tell {LOVE_NAME} goodnight right away because I didn't trust my own tone.",
+            "I slept badly and woke up grateful, which didn't make sense and was still true.",
+            "I texted {LOVE_NAME} something casual and felt everything uncasual beneath it.",
+            "I touched my own lips and tried to imagine {LOVE_POSS_ADJ} there.",
+            "I felt like I was waiting for something, and the waiting had texture now.",
+            "I carried the almost-kiss around all day like a secret.",
+            "I understood that we'd crossed a line without crossing it, if that made any sense."
+          ],hard:[]}
+        },
+
+        // Page 15
+        {
+          s1:{soft:[
+            "Life stayed unimpressed by longing; it handed us schedules and obligations and expected us to remain coherent.",
+            "A busy stretch arrived and made our messages shorter, as if time was rationing tenderness.",
+            "The calendar filled up like a sink you forgot you'd left running.",
+            "We both got tired, and tiredness turned small misunderstandings into sharp edges.",
+            "Days went by where we only traded essentials, and I hated how quickly my brain called it abandonment.",
+            "The world reminded us it existed and had demands.",
+            "We hit a patch where life pulled us in different directions and we had to work to stay tethered.",
+            "Reality intruded with deadlines and distance and we both felt it.",
+            "We went from constant contact to scattered texts, and the shift felt ominous.",
+            "I missed {LOVE_NAME} in the specific way you missed someone you were used to having."
+          ],hard:[]},
+          s2:{soft:[
+            "{LOVE_NAME} sounded tired on the phone, and I chose to reach for {LOVE_OBJ} anyway, which felt like choosing risk.",
+            "I missed {LOVE_NAME} with the strange intensity of missing a habit, like missing a stair you always stepped on in the dark.",
+            "{LOVE_NAME} apologized for being busy and I pretended it didn't matter while my body kept counting.",
+            "We tried to schedule each other like errands, and it made me angry at the world, not at {LOVE_NAME}.",
+            "When {LOVE_NAME} finally called, I heard how strained {LOVE_SUBJ} was and felt my resentment fold into concern.",
+            "{LOVE_NAME} sent me voice notes at midnight, exhausted, and I saved them.",
+            "{LOVE_NAME} texted \"I miss your face\" and I felt it in my chest.",
+            "{LOVE_NAME} made time even when there wasn't time, and I noticed.",
+            "{LOVE_NAME} fell asleep on the phone and I listened to {LOVE_OBJ} breathe.",
+            "{LOVE_NAME} said {LOVE_SUBJ} was sorry for being absent and I said I understood because I did."
+          ],hard:[]},
+          s3:{soft:[
+            "I worried I'd found love only to discover I still didn't know how to hold it without gripping too hard.",
+            "I caught myself rehearsing the speech where I pretended I didn't need anyone.",
+            "I realized how much my fear sounded like logic when it spoke quickly.",
+            "I hated that I still expected punishment after joy, like I'd learned a superstition and couldn't unlearn it.",
+            "[t4t] I didn't want to make my fear {LOVE_NAME}'s job, but I also didn't want to go back to being alone with it.",
+            "I felt needy and hated feeling needy, which made me needier.",
+            "I wanted reassurance and felt ashamed of wanting it.",
+            "I noticed old patterns trying to activate: withdraw, protect, expect the worst.",
+            "I felt the distance and couldn't tell if it was real or if I was inventing it.",
+            "I had to keep choosing to trust instead of to prepare for ending."
+          ],hard:[]},
+          s4:{soft:[
+            "{LOVE_NAME} sent a photo of a streetlight reflected in a puddle, and I stared at it longer than made sense.",
+            "{LOVE_NAME} texted a single line - \"I'm fried, but I miss you\" - and it felt like a hand on my back.",
+            "I replied with a voice note that didn't explain anything; it only said, in my tone, that I was here.",
+            "{LOVE_NAME} sent me a picture of {LOVE_POSS_ADJ} dinner, half-burnt, and the honesty made me laugh out loud.",
+            "We exchanged a few messages that were nothing but proof of continued existence.",
+            "{LOVE_NAME} sent a song with no explanation and I understood anyway.",
+            "{LOVE_NAME} reacted to a message I'd sent hours ago, and the delayed response felt like {LOVE_SUBJ} was still thinking of me.",
+            "I sent {LOVE_NAME} something small and got back a heart emoji, which was enough.",
+            "We had a two-minute phone call that was just \"Hi, I love you, bye\" and it sustained me for days.",
+            "{LOVE_NAME} texted \"Soon\" and I held onto the promise."
+          ],hard:[]},
+          s5:{soft:[
+            "We picked a day to see each other, and the day became a marker I touched in my mind when the week felt long.",
+            "When the plan settled into place, I felt a quiet relief, like the world had agreed to stop testing us for a minute.",
+            "I stopped counting hours and started counting toward {LOVE_NAME} again.",
+            "Nothing was solved, but the thread between us tightened, and that was enough to sleep.",
+            "I realized distance didn't have to mean disappearance; it could mean waiting with intention.",
+            "I marked the calendar and felt the future become real again.",
+            "I planned what I'd wear and felt ridiculous and didn't care.",
+            "I counted down like I was waiting for something I'd earned.",
+            "I felt anticipation replace anxiety, which was progress.",
+            "I let myself look forward instead of bracing backward."
+          ],hard:[]}
+        },
+
+        // Page 16
+        {
+          s1:{soft:[
+            "When I saw {LOVE_NAME} again, I tried to act normal and failed immediately.",
+            "The reunion was quiet, but I felt it in my body the way you felt a bruise finally stop arguing with pain.",
+            "I spotted {LOVE_NAME} across a room and my nervous system reacted before my brain caught up.",
+            "{LOVE_NAME} arrived late, hair wind-messed, and I felt absurdly relieved to see something imperfect and real.",
+            "We met at a corner we'd already used before, and the familiarity felt like a spell.",
+            "Seeing {LOVE_NAME} after time apart made me realize how much space {LOVE_SUBJ} had started to take up in my life.",
+            "We hugged and I felt myself relax in stages.",
+            "I saw {LOVE_NAME} and all my worry looked stupid in comparison to the reality of {LOVE_OBJ} being here.",
+            "{LOVE_NAME} smiled and I remembered why I'd been willing to be patient.",
+            "We found each other in a crowd and it felt like coming home to a place I was still building."
+          ],hard:[]},
+          s2:{soft:[
+            "{LOVE_NAME} said {LOVE_SUBJ} had missed me without decorating it, and the plainness made my eyes sting.",
+            "{LOVE_NAME} stood close enough that the space between us felt like a question neither of us wanted to rush.",
+            "{LOVE_NAME} looked tired and tried to smile anyway; I hated how much tenderness that made in me.",
+            "{LOVE_NAME} touched my sleeve lightly, as if confirming I was not a rumor.",
+            "{LOVE_POSS_ADJ} voice softened on my name, and I felt it like a thumbprint.",
+            "{LOVE_NAME} looked at me like {LOVE_SUBJ} was memorizing my face, updating the file.",
+            "{LOVE_NAME} asked how I was and actually waited for the real answer.",
+            "{LOVE_NAME} held my hand in both of {LOVE_POSS_ADJ} and I felt claimed in the best way.",
+            "{LOVE_NAME} said \"There you are\" like I'd been missing and now was found.",
+            "{LOVE_NAME} hugged me longer than was probably appropriate for public and I didn't care."
+          ],hard:[]},
+          s3:{soft:[
+            "I trusted {LOVE_NAME} not because {LOVE_SUBJ} was flawless, but because {LOVE_SUBJ} returned - because {LOVE_SUBJ} repaired - because {LOVE_SUBJ} stayed.",
+            "The old fear whispered not to want too openly; I answered it with a breath that felt like rebellion.",
+            "I noticed how my body stopped bracing when {LOVE_NAME} was near.",
+            "I realized I'd been lonely in a specific way before {LOVE_NAME}, and I didn't want to go back to that kind of quiet.",
+            "I watched myself choose presence over defense, and it felt unfamiliar.",
+            "I let myself feel the fullness of relief without qualifying it.",
+            "I stopped performing fine and just was, and {LOVE_NAME} met me there.",
+            "I felt safe enough to be tired, which was its own intimacy.",
+            "I realized trust was something I was building in real time, not something I had to arrive with.",
+            "I chose to believe {LOVE_NAME} meant what {LOVE_SUBJ} said, and the choice felt like progress."
+          ],hard:[]},
+          s4:{soft:[
+            "{LOVE_POSS_ADJ} knuckles brushed mine, tentative, and I didn't move away; my stillness said what I couldn't say yet.",
+            "We walked shoulder to shoulder, and the silence between us felt like a room with someone sleeping safely inside it.",
+            "{LOVE_NAME} asked if I was okay, and I told the truth instead of a version that kept me safe.",
+            "We laughed at something stupid and it felt like a door opening again.",
+            "{LOVE_NAME} reached for my hand and stopped; I closed the gap myself.",
+            "We synced our steps without trying, bodies remembering their rhythm.",
+            "{LOVE_NAME} pointed out something small and beautiful and I loved that {LOVE_SUBJ} wanted to share it.",
+            "We fell into our old ease and I felt my defenses lower like curtains opening.",
+            "{LOVE_NAME} teased me gently and I teased back and it felt like home.",
+            "We touched constantly - shoulders, hands, knees - like we were making up for lost contact."
+          ],hard:[]},
+          s5:{soft:[
+            "By the time we separated, the time apart felt less like a warning and more like proof we could find each other again.",
+            "I went home thinking love might not be a cliff; it might be a road with guardrails we could build together.",
+            "My apartment still looked the same, but I felt less trapped inside it.",
+            "I slept with my phone on the pillow beside me, not as a ritual, just because I could.",
+            "The night didn't feel empty; it felt like a pause with a return built in.",
+            "I texted {LOVE_NAME} goodnight and got back \"Sweet dreams\" and slept like I'd been given permission.",
+            "I woke up still smiling, which was new.",
+            "I felt the day ahead as something to move through rather than something to survive.",
+            "I realized I was happy, and the realization didn't scare me as much as it used to.",
+            "I let myself have this without waiting for the other shoe."
+          ],hard:[]}
+        },
+
+        // Page 17
+        {
+          s1:{soft:[
+            "I tried to confess in one clean sentence and discovered I didn't have a clean life.",
+            "The truth gathered in my throat like a song I'd been humming for months without lyrics.",
+            "I carried the words around all day like a stone in my mouth.",
+            "I kept waiting for the perfect moment and then realized perfection was just another delay tactic.",
+            "I decided to say it before fear built a better argument.",
+            "I practiced in the mirror and felt ridiculous and practiced anyway.",
+            "I wrote it down first to see if the words would hold their shape on paper.",
+            "I knew if I didn't say it soon, I'd talk myself out of it permanently.",
+            "I felt the confession building like pressure, like weather.",
+            "I chose a moment that wasn't perfect because no moment would be."
+          ],hard:[]},
+          s2:{soft:[
+            "I told {LOVE_NAME} I thought I was falling for {LOVE_OBJ}, and the words sounded too bare in the air.",
+            "I admitted I wanted {LOVE_NAME} in my future, and the simplicity made my palms sweat.",
+            "I said I cared in a way that didn't fit inside friendship anymore.",
+            "I told {LOVE_NAME} I liked {LOVE_OBJ} too much and didn't know what to do with it.",
+            "I asked if {LOVE_NAME} had felt it too, and hated myself for the vulnerability of the question.",
+            "I said the words out loud: \"I have feelings for you,\" and they sounded both too small and too big.",
+            "I told {LOVE_NAME} {LOVE_SUBJ} made me want to try being brave.",
+            "I admitted I thought about {LOVE_OBJ} constantly and it was getting inconvenient.",
+            "I said I didn't want to be just friends, and my voice shook.",
+            "I told {LOVE_NAME} I was falling and asked if {LOVE_SUBJ} would catch me."
+          ],hard:[]},
+          s3:{soft:[
+            "{LOVE_NAME} went still - not cold, just flooded - and I had one terrible moment where I imagined I'd misread everything.",
+            "{LOVE_NAME} blinked hard, and I felt the old shame reach for the steering wheel like it knew the route.",
+            "{LOVE_NAME} looked away and then back, like {LOVE_SUBJ} was deciding whether to be brave or to be safe.",
+            "The pause lasted long enough for my brain to start building exits.",
+            "I watched {LOVE_NAME}'s face change and didn't know whether the change meant yes or goodbye.",
+            "{LOVE_NAME} took a breath that sounded like {LOVE_SUBJ} was steadying {LOVE_REFL}.",
+            "{LOVE_NAME} looked at me like {LOVE_SUBJ} was trying to read something written small.",
+            "{LOVE_NAME} said \"Oh\" and I died a thousand times in the silence after.",
+            "{LOVE_NAME} reached for my hand and I didn't know if it was comfort or connection.",
+            "{LOVE_NAME} smiled and I couldn't tell if it was sad or glad or both."
+          ],hard:[]},
+          s4:{soft:[
+            "{LOVE_NAME} said {LOVE_SUBJ} cared enough to be scared, and the fear changed shape into something we could hold together.",
+            "{LOVE_NAME} said \"me too\" with the softness of someone putting down armor.",
+            "{LOVE_NAME} confessed {LOVE_SUBJ} had been afraid of ruining what we had, which made me laugh once, startled and miserable.",
+            "{LOVE_NAME} reached for my hand like {LOVE_SUBJ} had decided to stop pretending.",
+            "{LOVE_NAME} told me {LOVE_SUBJ} had been waiting for me to say it first, and the honesty was almost funny.",
+            "{LOVE_NAME} said {LOVE_SUBJ} felt the same and my heart did something complicated.",
+            "{LOVE_NAME} admitted {LOVE_SUBJ} had been hoping I'd say something first because {LOVE_SUBJ} was too scared.",
+            "{LOVE_NAME} kissed my hand and said \"Yes, you idiot, yes.\"",
+            "{LOVE_NAME} laughed and cried at the same time and I'd never seen anything more beautiful.",
+            "{LOVE_NAME} said \"I was hoping you'd say that\" and I felt my whole body relax."
+          ],hard:[]},
+          s5:{soft:[
+            "We didn't solve love in that moment; we only agreed to stop lying to ourselves about it.",
+            "I left with my heart still inside my chest, which felt like a hard-won, ordinary miracle: my own life, finally.",
+            "On the walk home, the streetlights looked the same, but I felt like I'd crossed a line I couldn't uncross.",
+            "I slept badly and still woke up relieved, like I'd stopped holding my breath.",
+            "Nothing exploded; nothing collapsed; the quiet continuation felt like permission.",
+            "I texted {LOVE_NAME} \"I'm glad I told you\" and got back a heart.",
+            "I cried in my apartment, alone, and the tears felt like release.",
+            "I looked at myself in the mirror and didn't recognize the person smiling back.",
+            "I felt terrified and exhilarated in equal measure.",
+            "I understood that this was the beginning of something, not the end of waiting."
+          ],hard:[]}
+        },
+
+        // Page 18
+        {
+          s1:{soft:[
+            "We called it a date out loud, and the word sounded both childish and true.",
+            "The next time we met, we didn't pretend it was accidental.",
+            "We chose a time and a place and admitted we were choosing each other.",
+            "We met with intention, which made my nerves louder than the street.",
+            "I watched {LOVE_NAME} approach and felt my stomach tighten like a fist.",
+            "We planned it like it mattered because it did.",
+            "We picked a place neither of us had been, making new memories on purpose.",
+            "We texted about logistics and underneath was everything we weren't saying yet.",
+            "We agreed to meet and the agreement felt like a promise.",
+            "We showed up for each other deliberately, which changed everything."
+          ],hard:[]},
+          s2:{soft:[
+            "We chose somewhere unhurried, and we talked about boundaries like people drawing a map in good light.",
+            "{LOVE_NAME} checked in with {LOVE_POSS_ADJ} eyes and then {LOVE_POSS_ADJ} voice, making consent feel like care instead of ceremony.",
+            "{LOVE_NAME} asked what I liked and listened as if preferences were a form of truth.",
+            "{LOVE_NAME} said {LOVE_SUBJ} wanted to go slow, and I felt my whole body say thank you.",
+            "We talked about what scared us and didn't make a joke out of it.",
+            "We established what we both wanted and it felt like building something together.",
+            "{LOVE_NAME} asked permission before touching and I appreciated the asking.",
+            "We negotiated tenderness like it was important, because it was.",
+            "{LOVE_NAME} told me what felt good and I realized I could do the same.",
+            "We made space for honesty about bodies and desire and it felt revolutionary."
+          ],hard:[]},
+          s3:{soft:[
+            "I realized how badly I needed someone to treat my desire as normal - not funny, not tragic, not temporary.",
+            "I felt grief for time lost and relief that I was still here to live the rest of it.",
+            "I stopped asking whether I was allowed and started asking what I wanted.",
+            "[wlw] I realized how much of my life had been spent pretending women were a safe subject only in theory.",
+            "[mlm] I realized how much of my life had been spent pretending men were a safe subject only in theory.",
+            "I felt the weight of all the time I'd wasted hiding lift slightly.",
+            "I noticed how {LOVE_NAME} made desire feel safe instead of shameful.",
+            "I felt seen in my wanting and not judged for it.",
+            "I realized I didn't have to perform a different desire than the one I had.",
+            "I felt permission radiate from {LOVE_NAME} and reflected it back."
+          ],hard:[]},
+          s4:{soft:[
+            "{LOVE_NAME} reached across the table, palm up, and waited; the waiting felt like respect I wasn't used to.",
+            "I took {LOVE_POSS_ADJ} hand and felt my body stop bracing, as if it was finally allowed to rest.",
+            "We held hands like it was normal, and that normalness felt like a bruise being soothed.",
+            "I squeezed {LOVE_POSS_ADJ} fingers once, not romantic, just confirming: I'm here.",
+            "{LOVE_POSS_ADJ} thumb traced my knuckle absentmindedly, and I felt stupidly grateful for the absence.",
+            "We intertwined fingers and the fit felt intentional.",
+            "{LOVE_NAME} brought my hand to {LOVE_POSS_ADJ} lips briefly and I melted.",
+            "We held hands across the table through the whole meal.",
+            "{LOVE_NAME} played with my fingers while talking and I forgot to listen.",
+            "We touched constantly, casually, like we were learning a new language through contact."
+          ],hard:[]},
+          s5:{soft:[
+            "We made plans for tomorrow, and the ordinariness of it felt like a quiet revolution I didn't need to announce.",
+            "At the end of the night, I didn't feel saved; I felt accompanied, which was better.",
+            "I went home with {LOVE_POSS_ADJ} scent on my sleeve and tried not to press my face into the fabric.",
+            "The date ended and the world kept moving, but I felt like something had finally begun to move with me.",
+            "[transLove] {LOVE_NAME} made a small, careful joke about being seen, and I understood it wasn't actually a joke.",
+            "We parted with a long hug and a promise to text when I got home.",
+            "I floated through the door of my apartment.",
+            "I replayed every moment like a song I wanted to memorize.",
+            "I went to bed happy, which was unfamiliar enough to be remarkable.",
+            "I slept with {LOVE_NAME}'s goodnight text on my screen."
+          ],hard:[]}
+        },
+
+        // Page 19
+        {
+          s1:{soft:[
+            "The moment arrived without spectacle; it simply waited until we stopped circling it.",
+            "We paused and there was nothing to do but tell the truth with our bodies.",
+            "We lingered at the edge of goodbye and didn't pretend it was only politeness keeping us there.",
+            "I felt the kiss coming like thunder you heard before you saw lightning.",
+            "We stood too close in the dark and the darkness stopped feeling empty.",
+            "The air between us changed texture, became something you could touch.",
+            "We both stopped talking at the same moment and the silence was full.",
+            "We looked at each other and the looking became a question.",
+            "We moved closer by degrees, giving each other time to retreat.",
+            "The moment stretched and neither of us rushed it."
+          ],hard:[
+            "{HURDLE} left us raw for a day, and rawness made tenderness feel like touching an exposed wire.",
+            "A stressful week frayed our patience, and the fear of ruining what we had hovered around us like static.",
+            "We were both tired, and tiredness made our words sharp in ways we didn't mean.",
+            "{HURDLE} pressed on us until we started speaking like enemies instead of allies.",
+            "A small argument left a residue, and the residue made closeness feel risky.",
+            "The day had been hard and we were both carrying it.",
+            "We'd fought earlier and the fight wasn't quite resolved.",
+            "External stress made us both defensive.",
+            "We were both hurting and trying not to hurt each other worse.",
+            "The moment came after struggle, not despite it."
+          ]},
+          s2:{soft:[
+            "{LOVE_NAME} asked if {LOVE_SUBJ} could kiss me, and the question made the world briefly exact: no guessing, no taking.",
+            "I said yes out loud, and my voice sounded unfamiliar - unhidden.",
+            "{LOVE_NAME} looked at me like {LOVE_SUBJ} was waiting for permission to be brave, and I gave it.",
+            "{LOVE_NAME} leaned in slowly, and I met {LOVE_OBJ} halfway because waiting felt like a lie.",
+            "I nodded once and felt my whole body commit to the decision.",
+            "I said \"Please\" and meant it more than I'd meant anything.",
+            "I closed the distance because I was tired of distance.",
+            "I touched {LOVE_POSS_ADJ} face and pulled {LOVE_OBJ} closer.",
+            "I answered the question {LOVE_NAME} asked with {LOVE_POSS_ADJ} eyes.",
+            "I kissed {LOVE_OBJ} first, surprising us both."
+          ],hard:[
+            "I considered retreating into \"just friends\" because self-erasure was still a tool I knew how to use.",
+            "{LOVE_NAME} admitted {LOVE_SUBJ} was afraid of disappointing me, and I realized I wanted {LOVE_POSS_ADJ} real life, not {LOVE_POSS_ADJ} best behavior.",
+            "I said I didn't want to fight, and {LOVE_NAME} said {LOVE_SUBJ} didn't either, and the agreement sounded fragile.",
+            "We paused and talked instead of kissing, and the talking felt like choosing the hard thing on purpose.",
+            "I told {LOVE_NAME} I was scared of being too much; {LOVE_NAME} told me {LOVE_SUBJ} was scared of not being enough.",
+            "We almost pulled away but chose to stay instead.",
+            "We acknowledged the hurt before we touched.",
+            "We apologized while standing close.",
+            "We chose each other even though we were both a mess.",
+            "We held each other carefully, knowing we were both bruised."
+          ]},
+          s3:{soft:[
+            "The kiss began carefully and then steadied, warm and unmistakably mutual.",
+            "When we kissed, it didn't feel like crossing a line; it felt like admitting what had been present all along.",
+            "It was gentle, and gentleness made me want to cry with embarrassment.",
+            "I tasted rain and tea and something I couldn't name without sounding foolish.",
+            "We kissed and the world kept making its usual noises, which was somehow the strangest part.",
+            "It was soft and slow and I felt it everywhere.",
+            "We kissed like we had time, like there was no rush.",
+            "It felt inevitable and surprising at once.",
+            "We fit together in a way that felt both new and familiar.",
+            "The kiss was sweet and I let myself have sweet."
+          ],hard:[
+            "I said I was scared but still here, and the sentence pulled the night back toward us.",
+            "{LOVE_NAME} asked me to stay, and the request held both apology and need without turning either into a spectacle.",
+            "We chose repair first, and the choice felt more intimate than a kiss.",
+            "I apologized for the ways I used fear as a weapon; {LOVE_NAME} apologized for the ways {LOVE_SUBJ} withdrew as punishment.",
+            "We reached for each other verbally before we reached physically, and it mattered.",
+            "We acknowledged we were both scared and kissed anyway.",
+            "We chose tenderness deliberately, as an antidote.",
+            "We held each other through the fear.",
+            "We kissed and it felt like a promise to try better.",
+            "We turned toward each other instead of away, and that was everything."
+          ]},
+          s4:{soft:[
+            "Afterward I laughed once, dazed, and {LOVE_NAME} did too, like we'd both survived something we'd been building in silence.",
+            "{LOVE_NAME} rested {LOVE_POSS_ADJ} forehead against mine for a second, and the closeness felt less like fire and more like shelter.",
+            "We pulled back and looked at each other like strangers who'd just remembered their own names.",
+            "{LOVE_POSS_ADJ} hands shook slightly, and it made me feel protective and seen at the same time.",
+            "I couldn't find anything clever to say; neither of us required cleverness.",
+            "We smiled at each other like idiots.",
+            "We touched foreheads and breathed together.",
+            "We kissed again, softer, confirming.",
+            "We held each other and swayed slightly.",
+            "We existed in the aftermath without needing to name it."
+          ],hard:[
+            "We talked it through slowly, and the talking became the real devotion: the part where nobody disappeared.",
+            "We chose repair over pride, and I felt an old script in my head tear quietly at the seam.",
+            "The tension didn't vanish, but it stopped being in charge.",
+            "We made a small plan - how to pause next time, how to return - and it felt like building a railing.",
+            "When we finally touched again, it was careful and consensual, like handling something valuable.",
+            "We kissed after choosing each other through difficulty.",
+            "We held each other and felt the relief of staying.",
+            "We were gentle with each other's bruises.",
+            "We kissed and it tasted like forgiveness.",
+            "We chose this over easier loneliness."
+          ]},
+          s5:{soft:[
+            "I went home alone, but the air felt less hostile, as if it had reluctantly made room for my truth.",
+            "I slept with the taste of {LOVE_NAME} on my mouth and woke up startled by my own happiness.",
+            "I didn't tell myself it was a mistake; I didn't have the energy to lie.",
+            "In the morning, I still felt afraid, but the fear no longer sounded like a verdict.",
+            "I caught my reflection and didn't look away.",
+            "I texted {LOVE_NAME} \"I'm still smiling\" and got back \"Me too.\"",
+            "I touched my lips and felt the memory there.",
+            "I fell asleep easily, which was rare and precious.",
+            "I woke up believing this was real.",
+            "I let myself have the happiness without waiting for it to be taken."
+          ],hard:[
+            "When we finally separated, it was with the fragile confidence of people who'd learned they could survive honesty together.",
+            "I understood the love wasn't only in the kiss; it was in the returning, the way we kept coming back with open hands.",
+            "I went home shaken and steadier, which didn't make sense and still was true.",
+            "The night ended without resolution, but it ended with choice, and that was enough.",
+            "I slept badly and still woke up committed to trying again.",
+            "I felt wrung out and hopeful.",
+            "I knew we weren't fixed but we were facing the same direction.",
+            "I felt the foundation strengthen even as it shifted.",
+            "I understood that love was work and chose to do the work.",
+            "I fell asleep holding my phone, hoping {LOVE_NAME} was sleeping too."
+          ]}
+        },
+
+        // Page 20
+        {
+          s1:{soft:[
+            "Our romance didn't replace the friendship; it deepened it, making it harder to fake anything else.",
+            "We started making plans like it was normal, and the normalness was the strangest sweetness I'd ever tasted.",
+            "Days began to include {LOVE_NAME} in small ways I didn't have to announce.",
+            "We didn't become perfect; we became consistent.",
+            "I stopped calling it a crush in my head because the word felt like minimizing something alive.",
+            "We settled into being together like it was the most natural thing.",
+            "We built routines without discussing them, they just emerged.",
+            "We became a we without ceremony.",
+            "We integrated into each other's lives in small, significant ways.",
+            "We stopped trying to define it and just lived it."
+          ],hard:[]},
+          s2:{soft:[
+            "{RITUAL} became a habit we protected, not out of superstition, but because we liked who we were inside it.",
+            "We learned each other's tells - the gestures that meant I needed quiet now or I needed {LOVE_NAME} to sit beside me.",
+            "{LOVE_NAME} started leaving small things at my place, and I didn't panic.",
+            "We shared playlists and grocery lists and the kind of mundane logistics that used to scare me.",
+            "I learned {LOVE_POSS_ADJ} routines the way you learned a neighborhood: slowly, through repetition.",
+            "We developed inside jokes that no one else would understand.",
+            "We knew each other's orders, preferences, pet peeves.",
+            "We learned to read each other's silences.",
+            "We built a shared language made of references and shorthand.",
+            "We became fluent in each other."
+          ],hard:[]},
+          s3:{soft:[
+            "The old shame still tried to speak sometimes, but it sounded distant, like a radio in a neighboring apartment.",
+            "I grieved lost years and celebrated that I was here anyway, finally inside my own life.",
+            "I noticed how my body unclenched around {LOVE_NAME}, as if it had been bracing for years for no reason other than history.",
+            "I stopped flinching when someone assumed we were together.",
+            "I realized I wasn't waiting anymore for the moment the happiness got revoked.",
+            "I let people see us together and didn't apologize for it.",
+            "I introduced {LOVE_NAME} as my partner without my voice shaking.",
+            "I held {LOVE_POSS_ADJ} hand in public and survived the visibility.",
+            "I stopped performing straight for strangers.",
+            "I existed openly and it got easier each time."
+          ],hard:[]},
+          s4:{soft:[
+            "{LOVE_NAME} said {LOVE_SUBJ} liked being my partner, and the sentence landed softly and then didn't leave.",
+            "{LOVE_NAME} told me {LOVE_SUBJ} felt safe with me, and I almost didn't know how to hold the responsibility.",
+            "{LOVE_NAME} kissed my temple like it was nothing, and I felt it for hours afterward.",
+            "We argued once and repaired quickly, and the speed of repair felt more intimate than the argument.",
+            "{LOVE_NAME} asked me what I needed and didn't mock the answer.",
+            "{LOVE_NAME} said I love you first and I said it back.",
+            "{LOVE_NAME} showed me {LOVE_POSS_ADJ} worst and I didn't leave.",
+            "{LOVE_NAME} met my family and survived it.",
+            "{LOVE_NAME} made space in {LOVE_POSS_ADJ} life for me to fill.",
+            "{LOVE_NAME} chose me daily and I felt it."
+          ],hard:[]},
+          s5:{soft:[
+            "I told {LOVE_NAME} I wanted {LOVE_OBJ} as my partner too, and the vow stayed quiet enough to be true.",
+            "We held hands like we were learning a language our bodies had always known but our lives kept interrupting.",
+            "I stopped pretending I didn't care; the relief was physical.",
+            "At night, I fell asleep without bargaining with myself.",
+            "Nothing dramatic changed, and that was the miracle: the change held.",
+            "I said it back: I love you.",
+            "I stopped waiting for the end and started planning the middle.",
+            "I let myself imagine a future that included {LOVE_OBJ}.",
+            "I felt secure enough to be vulnerable.",
+            "I built a life instead of an exit strategy."
+          ],hard:[]}
+        },
+
+        // Page 21
+        {
+          s1:{soft:[
+            "The world remembered to be the world: a stare that lingered, a question that wasn't really a question.",
+            "Not everyone offered warmth, and the chill of that fact made {LOVE_NAME} go still for half a heartbeat.",
+            "We got caught in a moment that made us aware of how visible we were.",
+            "Someone's tone turned our existence into entertainment, and I felt anger rise clean and hot.",
+            "A stranger's look reminded me how conditional safety could be.",
+            "We faced a microaggression and had to decide how to respond.",
+            "Someone made an assumption that erased us and we felt it.",
+            "We encountered hostility dressed as concern.",
+            "We were reminded that our love was political to some people.",
+            "We faced the world's resistance to our existence together."
+          ],hard:[]},
+          s2:{soft:[
+            "I squeezed {LOVE_POSS_ADJ} hand, steadying, because I couldn't control strangers but I could refuse to leave {LOVE_OBJ} alone in them.",
+            "{LOVE_NAME} leaned closer, not hiding, simply choosing proximity as a small act of courage.",
+            "I shifted my body between {LOVE_NAME} and the worst of the attention without making a show of it.",
+            "{LOVE_NAME} looked at me like {LOVE_SUBJ} was checking whether I'd disappear; I didn't.",
+            "We moved together as if we'd practiced, even though we hadn't.",
+            "We faced it as a unit, which made it bearable.",
+            "{LOVE_NAME} held my hand tighter and I held back.",
+            "We didn't engage, we just existed louder.",
+            "We protected each other with presence.",
+            "We survived it together, which made it survivable."
+          ],hard:[]},
+          s3:{soft:[
+            "I thought of my younger self and wished I could tell them it wouldn't always be this heavy.",
+            "{LOVE_NAME} admitted {LOVE_SUBJ} was still learning not to flinch, and I said flinching wasn't failure; it was history showing its teeth.",
+            "I realized how many years I'd spent trying to be invisible to survive.",
+            "I felt grief for the fear that still lived in bodies like a second heartbeat.",
+            "[transLove] I watched {LOVE_NAME} measure the room the way you measured weather, and I hated the part of the world that taught {LOVE_OBJ} to.",
+            "I felt the cumulative weight of all the times we'd had to be careful.",
+            "I grieved that we had to be brave for things others took for granted.",
+            "I felt angry at the energy we spent on safety calculations.",
+            "I wanted a world where we could just be.",
+            "I held both the love and the exhaustion."
+          ],hard:[]},
+          s4:{soft:[
+            "We went home, made tea, shut the door; the sanctuary wasn't grand, only real, and reality was enough.",
+            "I said we didn't have to perform, and it felt like setting down a costume I hadn't known I was still wearing.",
+            "We debriefed like survivors of something minor and still exhausting.",
+            "{LOVE_NAME} asked if I was angry; I said yes and then laughed because the honesty startled me.",
+            "We sat close and let our bodies calm down before we tried to talk.",
+            "We processed it together, which made it smaller.",
+            "We reminded each other of our safety and our value.",
+            "We held each other until the shaking stopped.",
+            "We let ourselves be tired without judgment.",
+            "We built our own safe space and retreated to it."
+          ],hard:[]},
+          s5:{soft:[
+            "Later we talked about boundaries - what we shared, when we retreated - not as tragedy, but as planning for tenderness.",
+            "By the end of the night, our laughter returned, stubborn as green in winter.",
+            "I realized safety wasn't something we found; it was something we built and maintained.",
+            "The outside world stayed outside, and for a while that was enough.",
+            "[t4t] We didn't call it trauma; we called it logistics, and then we kissed anyway.",
+            "We chose joy in spite of, not in ignorance of.",
+            "We reclaimed the night with our own rituals.",
+            "We decided the world didn't get to ruin this.",
+            "We loved each other louder after being diminished.",
+            "We turned hurt into fuel for tenderness."
+          ],hard:[]}
+        },
+
+        // Page 22
+        {
+          s1:{soft:[
+            "We practiced saying it to someone else, because love got sturdier when it could stand in daylight.",
+            "I told a friend first, someone kind enough to react like it was good news instead of a headline.",
+            "We rehearsed the sentence in my kitchen, and it sounded strange until it didn't.",
+            "I decided to stop treating my relationship like contraband.",
+            "I chose one person and one moment and did it before I could talk myself out of it.",
+            "I came out again, in a different way, to someone who mattered.",
+            "I mentioned my partner casually and held my breath.",
+            "I stopped editing {LOVE_NAME} out of stories about my life.",
+            "I let someone see the full picture instead of the edited version.",
+            "I chose truth over comfort."
+          ],hard:[]},
+          s2:{soft:[
+            "My voice wobbled when I said I was seeing someone, and then steadied when nobody punished me for it.",
+            "{LOVE_NAME} watched me with a careful pride, like {LOVE_SUBJ} was witnessing me step out of a burning building and finally breathe.",
+            "The words felt heavy in my mouth; once spoken, they became lighter.",
+            "I expected questions that would hurt; I got curiosity that didn't.",
+            "I waited for my friend's face to change; it didn't, and I realized how much I'd been bracing.",
+            "My friend smiled and asked to hear more.",
+            "My friend said congratulations like it was simple.",
+            "My friend asked {LOVE_NAME}'s name and I loved saying it.",
+            "My friend had already guessed and was just waiting for me to confirm.",
+            "My friend hugged me and I cried a little."
+          ],hard:[]},
+          s3:{soft:[
+            "I realized acceptance wasn't a lightning bolt; it was repetition, being believed again and again until you started believing yourself.",
+            "{LOVE_NAME} said {LOVE_SUBJ} used to think love had to hurt to be real, and I offered a quieter proof: consistency.",
+            "I noticed how my body relaxed when the conversation stayed normal.",
+            "I felt grief for how much fear had lived in me for so long without being invited.",
+            "I stopped treating my own life like a confession and started treating it like a fact.",
+            "I practiced saying partner until it felt natural.",
+            "I let myself be celebrated.",
+            "I accepted congratulations without deflecting.",
+            "I let people be happy for me.",
+            "I stopped minimizing my joy to make others comfortable."
+          ],hard:[]},
+          s4:{soft:[
+            "We celebrated with something small - dessert, a walk, a stupid movie - because joy didn't need justification.",
+            "At home, {LOVE_NAME} left a note that said {LOVE_SUBJ} was glad it was me, and I kept it like a charm against old nightmares.",
+            "{LOVE_NAME} kissed my cheek in the hallway like we'd always been allowed to.",
+            "We didn't toast; we just sat together and let the relief be what it was.",
+            "I laughed too loudly at the movie and realized it was because I could.",
+            "We held hands on the couch and it felt like victory.",
+            "{LOVE_NAME} said {LOVE_SUBJ} was proud of me.",
+            "We made a playlist for the occasion.",
+            "We took a selfie and I didn't delete it.",
+            "We marked the moment as significant."
+          ],hard:[]},
+          s5:{soft:[
+            "Later I caught my reflection and looked less like someone hiding and more like someone inhabiting their own face.",
+            "We fell asleep with our hands tangled, not dramatic, just true.",
+            "I woke up once in the night and reached for {LOVE_NAME} automatically; {LOVE_SUBJ} was there.",
+            "The next morning, the world hadn't changed, but my relationship to it had.",
+            "I understood, quietly, that secrecy had been a kind of slow violence, and I didn't owe it my future.",
+            "I felt lighter, like I'd set down a bag I'd been carrying for miles.",
+            "I texted my friend thank you for making it easy.",
+            "I felt one step closer to free.",
+            "I realized I could do this again, tell other people, and survive it.",
+            "I felt proud of us both."
+          ],hard:[]}
+        },
+
+        // Page 23
+        {
+          s1:{soft:[
+            "Time passed, and what grew wasn't a spectacle; it was steadiness, the kind that made ordinary days livable.",
+            "We settled into a soft domestic orbit: groceries, shared keys, laughter that showed up even when we were tired.",
+            "The relationship became less about milestones and more about returning.",
+            "Weeks stacked into months without drama, and the lack of drama started to feel like a gift.",
+            "I stopped counting progress and started noticing peace.",
+            "We built a life made of small, repeated choices.",
+            "We learned each other's rhythms and moved in sync.",
+            "We became part of each other's dailiness.",
+            "We were boring in the best way.",
+            "We were home."
+          ],hard:[]},
+          s2:{soft:[
+            "A spare toothbrush appeared without fanfare, and the practicality felt more intimate than anything scripted.",
+            "{RITUAL} became a habit we protected by noticing it, by making space for it, by returning.",
+            "{LOVE_NAME} left a sweater at my place and didn't pretend it was an accident.",
+            "We learned each other's cupboards and didn't make a joke about how serious that was.",
+            "I started buying {LOVE_NAME}'s favorite tea without telling {LOVE_OBJ}; {LOVE_SUBJ} noticed anyway.",
+            "We had a drawer, then a shelf, then a closet.",
+            "We talked about keys like it was practical, which it was, and also significant.",
+            "We merged our lives in increments so small they felt inevitable.",
+            "We built cohabitation without a big conversation, just a series of yeses.",
+            "We nested without noticing we were nesting."
+          ],hard:[]},
+          s3:{soft:[
+            "I learned love could be calm without being empty, and the calm made me cry the first time I noticed it.",
+            "My nervous system began to trust: I stopped bracing for the joke, the punishment, the exit.",
+            "I realized I'd been addicted to uncertainty because uncertainty was familiar.",
+            "I stopped apologizing for wanting affection.",
+            "I noticed how my body felt when it wasn't being policed by my own shame.",
+            "I relaxed into being loved.",
+            "I let myself be soft.",
+            "I stopped waiting for disaster.",
+            "I accepted good as sustainable, not as a fluke.",
+            "I learned that peace wasn't boring; it was the point."
+          ],hard:[]},
+          s4:{soft:[
+            "When conflict threatened, we slowed down instead of speeding up; patience became a form of devotion we could actually sustain.",
+            "We apologized faster, not because we were less proud, but because we'd learned pride wasn't the same as self-respect.",
+            "{LOVE_NAME} named {LOVE_POSS_ADJ} feelings without attacking, and I tried to do the same; it felt like learning to walk again.",
+            "We made room for each other's bad days without turning them into verdicts.",
+            "We stopped treating repair as failure and started treating it as maintenance.",
+            "We fought better, cleaner, with less cruelty.",
+            "We learned to say I'm hurt without making it a weapon.",
+            "We chose repair quickly because we knew how.",
+            "We built resilience through repetition.",
+            "We got good at coming back to each other."
+          ],hard:[]},
+          s5:{soft:[
+            "On a rainy evening, we sat together and felt rich in the simplest currency: time given freely.",
+            "I thought this was what I'd wanted when I didn't know how to want - a place to rest without vanishing.",
+            "I stopped imagining escape routes and started imagining plans.",
+            "The city outside our window kept being itself; inside, we stayed.",
+            "I looked at {LOVE_NAME} asleep and felt a quiet, sober gratitude that didn't ask to be poetic.",
+            "I felt content, which was rarer than happy and more sustainable.",
+            "I felt at home in my life for maybe the first time.",
+            "I felt lucky and didn't question whether I deserved it.",
+            "I felt grateful and expressed it.",
+            "I felt arrived."
+          ],hard:[]}
+        },
+
+        // Page 24
+        {
+          s1:{soft:[
+            "One night we talked about the past honestly, not to reopen it, but to stop letting it choose for us.",
+            "We took a walk that turned into a conversation about what we owed our younger selves.",
+            "The season shifted, and the shift made old memories float up like debris.",
+            "We sat in my kitchen and named the things we didn't want to carry anymore.",
+            "We ended up talking about fear the way you talked about weather: as something real, not something shameful.",
+            "We shared our histories without using them as shields.",
+            "We talked about scars and how they'd shaped us.",
+            "We told each other the hard stories.",
+            "We traded truths we'd kept private.",
+            "We witnessed each other's past without trying to fix it."
+          ],hard:[
+            "{HURDLE} resurfaced as a shadow - an old fear, a harsh memory - and for a moment it tried to dim the room.",
+            "A familiar thought returned: what if this happiness was borrowed, what if it could be repossessed.",
+            "{HURDLE} crept back in quietly and made me second-guess everything I'd already learned.",
+            "A bad memory hit at the wrong time and made my body behave like it was back there.",
+            "The old shame tried to speak with authority again, and I felt how tired I was of listening.",
+            "External pressure returned and tested our foundation.",
+            "We faced a trigger and had to navigate it together.",
+            "The past intruded and we had to deal with it consciously.",
+            "We hit a rough patch that called back old patterns.",
+            "We faced something that made us both want to run."
+          ]},
+          s2:{soft:[
+            "{LOVE_NAME} said {LOVE_SUBJ} had spent years auditioning for a version of selfhood that would be rewarded, and the reward never arrived.",
+            "I admitted I used to pray to wake up different, and saying it now felt like setting down a stone I'd carried out of habit.",
+            "We traded stories we'd once told as jokes and realized they weren't jokes at all.",
+            "We spoke about the past without decorating it, and that plainness made it bearable.",
+            "[t4t] We talked about the years we spent translating ourselves for other people, and how exhausted translation made us.",
+            "We compared notes on survival and found overlap.",
+            "We named the ways we'd been hurt and how we'd adapted.",
+            "We acknowledged our respective damages without shame.",
+            "We offered each other context for our sensitivities.",
+            "We built understanding through shared vulnerability."
+          ],hard:[
+            "I felt the old shame flare, and {LOVE_NAME} didn't mock it; {LOVE_SUBJ} treated it like an injury that deserved care.",
+            "{LOVE_NAME} confessed {LOVE_SUBJ} sometimes expected punishment after joy, and I understood because my body had learned the same superstition.",
+            "The fear came back with teeth, and neither of us pretended not to hear it.",
+            "I admitted I still believed, sometimes, that I was too much; {LOVE_NAME} admitted {LOVE_SUBJ} still believed {LOVE_SUBJ} was not enough.",
+            "[transNarrator] I told {LOVE_NAME} about the particular exhaustion of being debated, and {LOVE_SUBJ} didn't ask me to justify my own existence.",
+            "We both spiraled and had to talk each other down.",
+            "We faced our demons in the same room.",
+            "We admitted we were both still scared sometimes.",
+            "We chose not to let fear drive.",
+            "We acknowledged the wounds and kept going."
+          ]},
+          s3:{soft:[
+            "We named what we wanted from love - softness, honesty, repair - and it sounded like instructions for building a home.",
+            "We agreed companionship wasn't a consolation prize; it was the actual miracle, repeated until it became a life.",
+            "We talked about what safety looked like in practice, not in slogans.",
+            "I realized I wanted a life where I didn't have to translate myself constantly.",
+            "We promised to keep telling the truth even when the truth was unflattering.",
+            "We articulated our needs clearly.",
+            "We made explicit what had been implicit.",
+            "We created a shared vision.",
+            "We aligned on values.",
+            "We built our own definition of success."
+          ],hard:[
+            "We made a plan for hard days: how to ask for reassurance, how to pause, how to return without keeping score.",
+            "We chose gentleness as a practice, and the fear shrank a little like it hated being watched.",
+            "We agreed to stop using silence as a weapon.",
+            "We set boundaries with the outside world and with the parts of ourselves that wanted to self-destruct.",
+            "We decided that panic wouldn't get to write the ending.",
+            "We created protocols for when we were triggered.",
+            "We agreed to repair quickly and thoroughly.",
+            "We promised to choose each other even when it was hard.",
+            "We committed to growth together.",
+            "We decided to face our shit instead of running from it."
+          ]},
+          s4:{soft:[
+            "{LOVE_NAME} said if we kept choosing each other, the past wouldn't get to be the ending, and I felt yes rise in my throat.",
+            "I told {LOVE_NAME} I loved {LOVE_OBJ}, not like a spell, but like a fact I was willing to live inside.",
+            "We sat there and let the words land without trying to make them pretty.",
+            "{LOVE_NAME} asked if I meant it; I did, and I didn't dilute it.",
+            "I realized I'd spent years avoiding vows because vows required visibility.",
+            "I said it clearly: I love you, I'm staying, I choose this.",
+            "{LOVE_NAME} said it back and we both cried a little.",
+            "We made promises we intended to keep.",
+            "We committed without drama.",
+            "We chose each other out loud."
+          ],hard:[
+            "I said I was here and not leaving, and the sentence became a handrail for both of us.",
+            "{LOVE_NAME} asked me not to disappear when it was hard, and I promised, because I'd finally learned disappearance wasn't safety.",
+            "I admitted how often I'd tried to run; {LOVE_NAME} admitted how often {LOVE_SUBJ} tried to shut down; we didn't romanticize either.",
+            "We held each other's hands like we were anchoring something.",
+            "We chose to stay in the discomfort until it softened.",
+            "We promised to fight for us, not against each other.",
+            "We committed to showing up even when scared.",
+            "We agreed that love was a verb.",
+            "We chose the work.",
+            "We stayed."
+          ]},
+          s5:{soft:[
+            "We walked home under streetlights that made everything look bruised and honest.",
+            "When we opened the door, the apartment greeted us with ordinary silence, and the silence felt like safety.",
+            "The night ended without fireworks; it ended with a decision that kept holding.",
+            "I noticed my body had stopped bracing, at least for that hour, and I didn't take it for granted.",
+            "I slept with my hand on {LOVE_NAME}'s back, like a quiet promise my body knew how to keep.",
+            "We went to bed tangled together.",
+            "We fell asleep mid-conversation, that comfortable.",
+            "We woke up still holding each other.",
+            "We faced the next day together.",
+            "We continued."
+          ],hard:[
+            "Afterward we made tea and sat close until the fear lost interest, like a storm running out of sky.",
+            "We ended the night laughing softly, not because the world was kind, but because we were together inside it.",
+            "The shadow didn't vanish, but it stopped filling the room.",
+            "I fell asleep still scared and still chosen, which felt like the beginning of healing.",
+            "We didn't defeat the fear; we outlasted it.",
+            "We chose each other over the fear.",
+            "We made it through another hard thing together.",
+            "We proved we could weather this.",
+            "We survived and learned.",
+            "We grew stronger."
+          ]}
+        },
+
+        // Page 25
+        {
+          s1:{soft:[
+            "Months later, it didn't feel like I'd become someone new; it felt like I'd stopped agreeing to be someone else.",
+            "Time gave us what it gave anything tended: strength that didn't announce itself, only held.",
+            "Looking back, the change was not a leap; it was a series of small refusals to disappear.",
+            "The story didn't end; it quieted into routine, and the routine didn't feel like a prison.",
+            "I stopped calling it a phase in my head and started calling it my life.",
+            "I looked back and saw the path I'd walked without realizing I was walking it.",
+            "I noticed how far I'd come without marking the distance.",
+            "I felt proud of the quiet accumulation of days.",
+            "I realized I'd built something sustainable.",
+            "I stopped waiting for the other shoe and started living."
+          ],hard:[]},
+          s2:{soft:[
+            "{LOVE_NAME} started leaving hair ties and chargers at my place like {LOVE_SUBJ} owned the future, and it made me laugh.",
+            "We learned each other's morning faces, unguarded and unflattering and real.",
+            "{LOVE_NAME} wore my sweatshirt home by accident and then didn't give it back; neither of us pretended it mattered less than it did.",
+            "We fell into a quiet habit of checking in: not surveillance, not obligation - just care.",
+            "Sometimes {LOVE_NAME} looked at me like {LOVE_SUBJ} was still surprised I stayed, and I kept staying anyway.",
+            "We built a shared life from small domestic acts.",
+            "We knew each other's routines intimately.",
+            "We moved around each other with practiced ease.",
+            "We were a team in the boring, beautiful ways.",
+            "We were us, fully."
+          ],hard:[]},
+          s3:{soft:[
+            "I realized I didn't need to be fearless; I only needed to keep choosing {LOVE_NAME} with my whole self present.",
+            "{LOVE_NAME} said {LOVE_SUBJ} hadn't expected love to feel this steady, and I said steady didn't mean dull; it meant survivable.",
+            "I said I didn't want to go back to the old hunger; {LOVE_NAME} said {LOVE_SUBJ} didn't want to either.",
+            "We didn't heal all at once; we healed the way you cleaned a room - one stubborn corner at a time.",
+            "[t4t] We stopped translating ourselves in our own home, and the relief was so big it almost felt like grief.",
+            "I learned that courage wasn't absence of fear.",
+            "I practiced choosing love over fear daily.",
+            "I got better at showing up authentically.",
+            "I felt increasingly at home in my own skin.",
+            "I felt free."
+          ],hard:[]},
+          s4:{soft:[
+            "We kissed with the ease of people who no longer needed to argue with their own joy.",
+            "Our hands found each other without ceremony, and the simplicity felt like relief rather than spectacle.",
+            "{LOVE_NAME} kissed me once, briefly, like a signature; I felt it all day anyway.",
+            "We leaned into each other like the world had finally stopped demanding proof.",
+            "I rested my forehead against {LOVE_NAME}'s and let the silence count as an ending and a beginning.",
+            "We touched constantly, casually, claiming each other.",
+            "We kissed hello and goodbye and for no reason.",
+            "We held hands while sleeping.",
+            "We chose physical closeness as our default.",
+            "We loved with our bodies as much as our words."
+          ],hard:[]},
+          s5:{soft:[
+            "The ending wasn't a curtain drop; it was a warm room: shared keys, shared jokes, shared silences, companionship that made the world workable.",
+            "Whatever the world did outside, inside we kept choosing each other - love that didn't erase the friendship it grew from.",
+            "Nothing about it was cinematic up close; it was better than that, because it lasted.",
+            "Later, the lights went out one by one, and the rest of the story happened close enough to be private.",
+            "We closed the door on the day and kept each other, not as a grand gesture, just as a life.",
+            "We built something real and imperfect and ours.",
+            "We loved each other in the ordinary, extraordinary ways.",
+            "We made a life together.",
+            "We were happy.",
+            "We were home."
+          ],hard:[]}
+        }
+      ];
+    }
+
+    // ============================================================
+    // State
+    // ============================================================
+    let state = {
+      rng: null,
+      runSeed: null,
+      prefs: null,
+      ctx: null,
+      pools: null,
+      usedSentences: new Set(),
+      pages: [],
+      index: -1,
+      quit: false,
+      prefsMode: "initial"
+    };
+
+    function makeRunContext(rng, prefs) {
+      const nPool = getNamePool(prefs.narrator.identity);
+      const lPool = getNamePool(prefs.love.identity);
+
+      const nName = pickName(nPool, rng);
+      const lName = pickName(lPool, rng, nName);
+
+      const nDef = identityDefaults(prefs.narrator.identity);
+      const lDef = identityDefaults(prefs.love.identity);
+
+      const nPron = (prefs.narrator.pronounPreset === "auto")
+        ? pronounsFromPreset(nDef.pronounPreset)
+        : pronounsFromPreset(prefs.narrator.pronounPreset, prefs.narrator.customPronouns);
+
+      const lPron = (prefs.love.pronounPreset === "auto")
+        ? pronounsFromPreset(lDef.pronounPreset)
+        : pronounsFromPreset(prefs.love.pronounPreset, prefs.love.customPronouns);
+
+      const inferredRoute = computeRouteFromGenderCats(nDef.genderCategory, lDef.genderCategory);
+      const chosenRoute = (prefs.routePref && prefs.routePref !== "auto" && prefs.routePref !== "surprise")
+        ? prefs.routePref
+        : inferredRoute;
+
+      const route = (prefs.routePref === "surprise")
+        ? pick(["wlw","mlm","straight","queer"], rng)
+        : chosenRoute;
+
+      const flags = {
+        narrGenderCategory: nDef.genderCategory,
+        loveGenderCategory: lDef.genderCategory,
+        narrIsTrans: !!nDef.isTrans,
+        loveIsTrans: !!lDef.isTrans
+      };
+
+      let partnerTerm = "partner";
+      if (prefs.partnerTermPref && prefs.partnerTermPref !== "auto") {
+        partnerTerm = prefs.partnerTermPref;
+      } else {
+        if (route === "wlw" || (route === "queer" && lDef.genderCategory === "woman")) {
+          partnerTerm = "girlfriend";
+        } else if (route === "mlm" || (route === "queer" && lDef.genderCategory === "man")) {
+          partnerTerm = "boyfriend";
+        } else if (route === "straight") {
+          partnerTerm = (lDef.genderCategory === "woman") ? "girlfriend" : "boyfriend";
+        } else {
+          partnerTerm = "partner";
+        }
+      }
+
+      const tokens = {
+        NARR_NAME: nName,
+        LOVE_NAME: lName,
+
+        LOVE_SUBJ: lPron.subj,
+        LOVE_OBJ: lPron.obj,
+        LOVE_POSS_ADJ: lPron.possAdj,
+        LOVE_POSS: lPron.poss,
+        LOVE_REFL: lPron.refl,
+
+        LOVE_SUBJ_CAP: cap(lPron.subj),
+        LOVE_OBJ_CAP: cap(lPron.obj),
+        LOVE_POSS_ADJ_CAP: cap(lPron.possAdj),
+        LOVE_WAS_WERE: verbForSubj(lPron.subj, "was", "were"),
+        LOVE_HAS_HAVE: verbForSubj(lPron.subj, "has", "have"),
+        LOVE_DOES_DO: verbForSubj(lPron.subj, "does", "do"),
+
+        NARR_SUBJ: nPron.subj,
+        NARR_OBJ: nPron.obj,
+        NARR_POSS_ADJ: nPron.possAdj,
+        NARR_POSS: nPron.poss,
+        NARR_REFL: nPron.refl,
+        NARR_SUBJ_CAP: cap(nPron.subj),
+        NARR_WAS_WERE: verbForSubj(nPron.subj, "was", "were"),
+
+        PARTNER_TERM: partnerTerm,
+        RITUAL: pick(CONFIG.rituals, rng),
+        HURDLE: pick(CONFIG.hurdles, rng)
+      };
+
+      return { tokens, route, flags };
+    }
+
+    function allowedCandidatesForSlot(slotObj, route, prefs, flags) {
+      const soft = (slotObj.soft || []).map(parseTagged).filter(c => candidateAllowed(c, route, prefs, flags));
+      const hard = (slotObj.hard || []).map(parseTagged).filter(c => candidateAllowed(c, route, prefs, flags));
+      return { soft, hard };
+    }
+
+    function pickSlotSentence(slotObj, rng, isNegative, route, prefs, flags) {
+      const { soft, hard } = allowedCandidatesForSlot(slotObj, route, prefs, flags);
+      const bucket = (isNegative && hard.length) ? hard : soft;
+
+      if (!bucket.length) {
+        const fallback = (isNegative && slotObj.hard && slotObj.hard.length) ? slotObj.hard : slotObj.soft;
+        return pickAndRemove(fallback, rng);
+      }
+
+      const idx = Math.floor(rng.next() * bucket.length);
+      const picked = bucket[idx].t;
+
+      const sourceArr = (isNegative && slotObj.hard && slotObj.hard.length && hard.length) ? slotObj.hard : slotObj.soft;
+      const removeIndex = sourceArr.findIndex(s => parseTagged(s).t === picked);
+      if (removeIndex >= 0) sourceArr.splice(removeIndex, 1);
+
+      return picked;
+    }
+
+    function generatePage(pageIdx) {
+      const isNegative = chooseNegative(state.rng, pageIdx, CONFIG.negativeChance, CONFIG.pacing);
+      const pagePool = state.pools[pageIdx];
+
+      const chosen = [];
+      for (const key of ["s1","s2","s3","s4","s5"]) {
+        let s = pickSlotSentence(pagePool[key], state.rng, isNegative, state.ctx.route, state.prefs, state.ctx.flags);
+        s = fill(s, state.ctx.tokens);
+
+        let attempts = 0;
+        while (state.usedSentences.has(s) && attempts < 12) {
+          s = pickSlotSentence(pagePool[key], state.rng, isNegative, state.ctx.route, state.prefs, state.ctx.flags);
+          s = fill(s, state.ctx.tokens);
+          attempts++;
+        }
+        if (state.usedSentences.has(s)) {
+          throw new Error("Uniqueness constraint failed. Add more sentence options.");
+        }
+        state.usedSentences.add(s);
+        chosen.push(s);
+      }
+
+      return chosen.join(" ");
+    }
+
+    function ensureGeneratedTo(index) {
+      while (!state.quit && state.index < index && state.index + 1 < CONFIG.pageCount) {
+        const nextIdx = state.index + 1;
+        const paragraph = generatePage(nextIdx);
+        state.pages.push(paragraph);
+        state.index = nextIdx;
+      }
+    }
+
+    function resetRun() {
+      state.runSeed = newRunSeedDifferentFromLast();
+      state.rng = makeRngFromSeed(state.runSeed);
+
+      const run = makeRunContext(state.rng, state.prefs);
+      state.ctx = run;
+      state.pools = buildStoryPools();
+      state.usedSentences = new Set();
+      state.pages = [];
+      state.index = -1;
+      state.quit = false;
+
+      ensureGeneratedTo(0);
+    }
+
+    // ============================================================
+    // Render
+    // ============================================================
+    function render() {
+      const storyEl = document.getElementById("story");
+      storyEl.innerHTML = "";
+
+      for (let i = 0; i <= state.index; i++) {
+        const page = document.createElement("div");
+        page.className = "page";
+        page.innerHTML = `
+          <div class="meta">Page ${i + 1} / ${CONFIG.pageCount}</div>
+          <p>${escapeHtml(state.pages[i])}</p>
+        `;
+        storyEl.appendChild(page);
+      }
+
+      const status = document.getElementById("status");
+      status.innerHTML = `
+        <span class="tag">Progress: ${state.index + 1}/${CONFIG.pageCount}</span>
+        ${state.quit ? `<span class="tag danger">Quit</span>` : ``}
+      `;
+
+      document.getElementById("prevBtn").disabled = state.index <= 0;
+      document.getElementById("nextBtn").disabled = state.quit || state.index + 1 >= CONFIG.pageCount;
+    }
+
+    // ============================================================
+    // Actions
+    // ============================================================
+    function next() {
+      if (state.quit) return;
+      if (state.index + 1 >= CONFIG.pageCount) return;
+      
+      ensureMusicPlaying();
+      
+      ensureGeneratedTo(state.index + 1);
+      render();
+      syncFooterHeightVar();
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }
+
+    function prev() {
+      if (state.index > 0) {
+        state.pages.pop();
+        state.index = state.index - 1;
+      }
+      render();
+      syncFooterHeightVar();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function save() {
+      const snapshot = {
+        runSeed: state.runSeed,
+        rngState: state.rng.getState(),
+        prefs: state.prefs,
+        ctx: state.ctx,
+        pools: state.pools,
+        pages: state.pages,
+        index: state.index,
+        quit: state.quit,
+        used: Array.from(state.usedSentences)
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+      render();
+      syncFooterHeightVar();
+    }
+
+    function load() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+
+      const snap = JSON.parse(raw);
+
+      state.prefs = snap.prefs || state.prefs;
+
+      state.runSeed = snap.runSeed || newRunSeedDifferentFromLast();
+      state.rng = makeRngFromSeed(state.runSeed);
+      if (snap.rngState) state.rng.setState(snap.rngState);
+
+      state.ctx = snap.ctx;
+      state.pools = snap.pools;
+      state.pages = snap.pages || [];
+      state.index = snap.index ?? -1;
+      state.quit = !!snap.quit;
+      state.usedSentences = new Set(snap.used || []);
+
+      if (!state.prefs || !state.ctx || !state.pools || !Array.isArray(state.pools)) {
+        if (!state.prefs) state.prefs = defaultPrefs();
+        resetRun();
+      } else {
+        render();
+        syncFooterHeightVar();
+      }
+    }
+
+    function quit() {
+      if (state.quit) {
+        location.reload();
+        return;
+      }
+      
+      fadeOutAndStop();
+      
+      state.quit = true;
+      
+      const quitBtn = document.getElementById("quitBtn");
+      if (quitBtn) {
+        quitBtn.textContent = "5. Reload";
+      }
+      
+      render();
+      syncFooterHeightVar();
+    }
+
+    // ============================================================
+    // Footer height measurement
+    // ============================================================
+    function syncFooterHeightVar() {
+      const footer = document.querySelector("footer.actions");
+      if (!footer) return;
+      const h = footer.offsetHeight || 0;
+      document.documentElement.style.setProperty("--footer-h", `${h}px`);
+    }
+
+    // ============================================================
+    // Preferences
+    // ============================================================
+    function defaultPrefs() {
+      return {
+        narrator: { identity: "woman", pronounPreset: "auto", customPronouns: null },
+        love: { identity: "woman", pronounPreset: "auto", customPronouns: null },
+        routePref: "auto",
+        includeTransBeats: false,
+        remember: true
+      };
+    }
+
+    function loadSavedPrefs() {
+      const raw = localStorage.getItem(PREFS_KEY);
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch { return null; }
+    }
+
+    function savePrefs(prefs) {
+      localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
+    }
+
+    function setModalVisible(visible) {
+      const back = document.getElementById("prefsBack");
+      back.style.display = visible ? "flex" : "none";
+      document.body.style.overflow = visible ? "hidden" : "";
+    }
+
+    function openPrefsModal(mode) {
+      state.prefsMode = mode;
+      const cancelBtn = document.getElementById("cancelPrefsBtn");
+      const startBtn = document.getElementById("startBtn");
+      const hint = document.getElementById("prefsHint");
+
+      if (mode === "edit") {
+        cancelBtn.style.display = "inline-block";
+        startBtn.textContent = "Apply & restart";
+        hint.textContent = "Changing these will restart the story.";
+      } else {
+        cancelBtn.style.display = "none";
+        startBtn.textContent = "Start";
+        hint.textContent = "You can keep it simple; defaults work.";
+      }
+
+      applyPrefsToModal(state.prefs || defaultPrefs());
+      setModalVisible(true);
+
+      const body = document.querySelector(".modalBody");
+      if (body) body.scrollTop = 0;
+      const overlay = document.getElementById("prefsBack");
+      if (overlay) overlay.scrollTop = 0;
+    }
+
+    function closePrefsModal() {
+      setModalVisible(false);
+    }
+
+    function readPrefsFromModal() {
+      const nIdentity = document.getElementById("nIdentity").value;
+      const lIdentity = document.getElementById("lIdentity").value;
+      const nPronounPreset = document.getElementById("nPronounPreset").value;
+      const lPronounPreset = document.getElementById("lPronounPreset").value;
+
+      const narratorCustom = (nPronounPreset === "custom")
+        ? { subj: document.getElementById("nSubj").value, obj: document.getElementById("nObj").value, possAdj: document.getElementById("nPossAdj").value }
+        : null;
+
+      const loveCustom = (lPronounPreset === "custom")
+        ? { subj: document.getElementById("lSubj").value, obj: document.getElementById("lObj").value, possAdj: document.getElementById("lPossAdj").value }
+        : null;
+
+      const routePref = document.getElementById("routePref").value;
+      const partnerTermPref = document.getElementById("partnerTerm").value;
+      const transBeats = document.getElementById("transBeats").checked;
+      const remember = document.getElementById("rememberPrefs").checked;
+
+      return {
+        narrator: { identity: nIdentity, pronounPreset: nPronounPreset, customPronouns: narratorCustom },
+        love: { identity: lIdentity, pronounPreset: lPronounPreset, customPronouns: loveCustom },
+        routePref,
+        partnerTermPref,
+        includeTransBeats: transBeats,
+        remember
+      };
+    }
+
+    function updateModalHints() {
+      const prefs = readPrefsFromModal();
+      const nDef = identityDefaults(prefs.narrator.identity);
+      const lDef = identityDefaults(prefs.love.identity);
+
+      const inferred = computeRouteFromGenderCats(nDef.genderCategory, lDef.genderCategory);
+      const routePref = prefs.routePref;
+
+      const anyTrans = nDef.isTrans || lDef.isTrans;
+      const transEl = document.getElementById("transBeats");
+      if (!transEl.dataset.touched) {
+        transEl.checked = !!anyTrans;
+      }
+
+      const note = document.getElementById("routeNote");
+      if (routePref === "auto") note.textContent = `Route: ${routeLabel(inferred)} (based on identities).`;
+      else if (routePref === "surprise") note.textContent = "Route: Surprise (any pairing).";
+      else note.textContent = `Route preference: ${routeLabel(routePref)}.`;
+
+      const warn = document.getElementById("prefsWarn");
+      const incompatible =
+        (routePref === "wlw" && !(nDef.genderCategory === "woman" && lDef.genderCategory === "woman")) ||
+        (routePref === "mlm" && !(nDef.genderCategory === "man" && lDef.genderCategory === "man")) ||
+        (routePref === "straight" && !( (nDef.genderCategory === "woman" && lDef.genderCategory === "man") || (nDef.genderCategory === "man" && lDef.genderCategory === "woman") )) ;
+
+      if (incompatible) {
+        warn.style.display = "block";
+        warn.textContent = "Note: Your route preference doesn't match the chosen identities. The story will still run, but it may lean more general unless you switch Route to Auto or Queer.";
+      } else {
+        warn.style.display = "none";
+        warn.textContent = "";
+      }
+    }
+
+    function applyPrefsToModal(prefs) {
+      document.getElementById("nIdentity").value = prefs.narrator.identity;
+      document.getElementById("lIdentity").value = prefs.love.identity;
+
+      document.getElementById("nPronounPreset").value = prefs.narrator.pronounPreset;
+      document.getElementById("lPronounPreset").value = prefs.love.pronounPreset;
+
+      document.getElementById("routePref").value = prefs.routePref;
+
+      const transEl = document.getElementById("transBeats");
+      transEl.dataset.touched = "";
+      transEl.checked = !!prefs.includeTransBeats;
+
+      document.getElementById("rememberPrefs").checked = !!prefs.remember;
+
+      if (prefs.narrator.customPronouns) {
+        document.getElementById("nSubj").value = prefs.narrator.customPronouns.subj || "they";
+        document.getElementById("nObj").value = prefs.narrator.customPronouns.obj || "them";
+        document.getElementById("nPossAdj").value = prefs.narrator.customPronouns.possAdj || "their";
+      }
+      if (prefs.love.customPronouns) {
+        document.getElementById("lSubj").value = prefs.love.customPronouns.subj || "they";
+        document.getElementById("lObj").value = prefs.love.customPronouns.obj || "them";
+        document.getElementById("lPossAdj").value = prefs.love.customPronouns.possAdj || "their";
+      }
+
+      document.getElementById("nCustomWrap").style.display = (prefs.narrator.pronounPreset === "custom") ? "grid" : "none";
+      document.getElementById("lCustomWrap").style.display = (prefs.love.pronounPreset === "custom") ? "grid" : "none";
+
+      updateModalHints();
+    }
+
+    function bindPrefsModal() {
+      const nPreset = document.getElementById("nPronounPreset");
+      const lPreset = document.getElementById("lPronounPreset");
+      const nWrap = document.getElementById("nCustomWrap");
+      const lWrap = document.getElementById("lCustomWrap");
+
+      function toggleCustom() {
+        nWrap.style.display = (nPreset.value === "custom") ? "grid" : "none";
+        lWrap.style.display = (lPreset.value === "custom") ? "grid" : "none";
+        updateModalHints();
+      }
+
+      const transEl = document.getElementById("transBeats");
+      transEl.addEventListener("change", () => { transEl.dataset.touched = "1"; });
+
+      ["nIdentity","lIdentity","routePref"].forEach(id => {
+        document.getElementById(id).addEventListener("change", updateModalHints);
+      });
+
+      ["nPronounPreset","lPronounPreset","nSubj","nObj","nPossAdj","lSubj","lObj","lPossAdj"].forEach(id => {
+        const el = document.getElementById(id);
+        el.addEventListener("change", toggleCustom);
+        el.addEventListener("input", toggleCustom);
+      });
+
+      nPreset.addEventListener("change", toggleCustom);
+      lPreset.addEventListener("change", toggleCustom);
+
+      document.getElementById("cancelPrefsBtn").addEventListener("click", () => {
+        closePrefsModal();
+      });
+
+      document.getElementById("startDefaultBtn").addEventListener("click", () => {
+        const d = defaultPrefs();
+        applyPrefsToModal(d);
+        const prefs = readPrefsFromModal();
+        startWithPrefs(prefs);
+      });
+
+      document.getElementById("startBtn").addEventListener("click", () => {
+        const prefs = readPrefsFromModal();
+        startWithPrefs(prefs);
+      });
+
+      toggleCustom();
+      updateModalHints();
+    }
+
+    function startWithPrefs(prefs) {
+      state.prefs = prefs;
+      if (prefs.remember) savePrefs(prefs);
+
+      closePrefsModal();
+
+      resetRun();
+      render();
+      syncFooterHeightVar();
+      window.scrollTo({ top: 0, behavior: "auto" });
+      
+      // Ensure music starts on the first real interaction
+      ensureMusicPlaying();
+    }
+
+    // ============================================================
+    // Wiring (core UI)
+    // ============================================================
+    function bindCore() {
+      document.getElementById("nextBtn").addEventListener("click", next);
+      document.getElementById("prevBtn").addEventListener("click", prev);
+      document.getElementById("saveBtn").addEventListener("click", save);
+      document.getElementById("loadBtn").addEventListener("click", load);
+      document.getElementById("quitBtn").addEventListener("click", quit);
+
+      document.getElementById("prefsBtn").addEventListener("click", () => openPrefsModal("edit"));
+
+      window.addEventListener("resize", syncFooterHeightVar);
+      window.addEventListener("orientationchange", syncFooterHeightVar);
+
+      window.addEventListener("keydown", (e) => {
+        const back = document.getElementById("prefsBack");
+        const modalOpen = back && back.style.display !== "none";
+        if (modalOpen) {
+          if (e.key === "Escape") closePrefsModal();
+          return;
+        }
+
+        if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.tagName === "SELECT")) return;
+        if (e.key === "1") next();
+        if (e.key === "2") prev();
+        if (e.key === "3") save();
+        if (e.key === "4") load();
+        if (e.key === "5") quit();
+      });
+    }
+
+    // ============================================================
+    // Music Player
+    // ============================================================
+    let musicState = {
+      audio: null,
+      playlist: [],
+      currentIndex: 0,
+      isPlaying: false,
+      fadingOut: false
+    };
+
+    function initMusicPlayer() {
+      musicState.audio = new Audio();
+      musicState.audio.volume = 0;
+      
+      musicState.playlist = [];
+      for (let i = 1; i <= 8; i++) {
+        musicState.playlist.push(`audio/${i}.mp3`);
+      }
+      
+      shufflePlaylist();
+      
+      musicState.audio.addEventListener('ended', playNextTrack);
+      musicState.audio.addEventListener('error', (e) => {
+        console.error('Audio error:', e);
+        playNextTrack();
+      });
+      
+      startMusicWithFadeIn();
+    }
+
+    function shufflePlaylist() {
+      for (let i = musicState.playlist.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [musicState.playlist[i], musicState.playlist[j]] = [musicState.playlist[j], musicState.playlist[i]];
+      }
+      musicState.currentIndex = 0;
+    }
+
+    function startMusicWithFadeIn() {
+      if (!musicState.audio || musicState.fadingOut) return;
+      
+      musicState.audio.src = musicState.playlist[musicState.currentIndex];
+      musicState.audio.volume = 0;
+      
+      const playPromise = musicState.audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          musicState.isPlaying = true;
+          fadeIn();
+        }).catch(err => {
+          console.error('Play promise rejected:', err);
+        });
+      }
+    }
+
+    function fadeIn() {
+      if (!musicState.audio || musicState.fadingOut) return;
+      
+      const targetVolume = 0.3;
+      const fadeStep = 0.01;
+      const fadeInterval = 50;
+      
+      const fade = setInterval(() => {
+        if (!musicState.audio || musicState.fadingOut) {
+          clearInterval(fade);
+          return;
+        }
+        
+        if (musicState.audio.volume < targetVolume - fadeStep) {
+          musicState.audio.volume = Math.min(musicState.audio.volume + fadeStep, targetVolume);
+        } else {
+          musicState.audio.volume = targetVolume;
+          clearInterval(fade);
+        }
+      }, fadeInterval);
+    }
+
+    function fadeOutAndStop() {
+      if (!musicState.audio || !musicState.isPlaying) return;
+      
+      musicState.fadingOut = true;
+      const fadeStep = 0.01;
+      const fadeInterval = 50;
+      
+      const fade = setInterval(() => {
+        if (!musicState.audio) {
+          clearInterval(fade);
+          return;
+        }
+        
+        if (musicState.audio.volume > fadeStep) {
+          musicState.audio.volume = Math.max(musicState.audio.volume - fadeStep, 0);
+        } else {
+          musicState.audio.volume = 0;
+          musicState.audio.pause();
+          musicState.isPlaying = false;
+          clearInterval(fade);
+        }
+      }, fadeInterval);
+    }
+
+    function playNextTrack() {
+      if (musicState.fadingOut) return;
+      
+      musicState.currentIndex = (musicState.currentIndex + 1) % musicState.playlist.length;
+      
+      if (musicState.currentIndex === 0) {
+        shufflePlaylist();
+      }
+      
+      if (musicState.audio) {
+        musicState.audio.src = musicState.playlist[musicState.currentIndex];
+        musicState.audio.play().catch(err => {
+          console.error('Error playing next track:', err);
+        });
+      }
+    }
+
+    function ensureMusicPlaying() {
+      if (!musicState.isPlaying && !musicState.fadingOut) {
+        startMusicWithFadeIn();
+      }
+    }
+
+    // ============================================================
+    // Init
+    // ============================================================
+    bindCore();
+    bindPrefsModal();
+    syncFooterHeightVar();
+
+    const savedPrefs = loadSavedPrefs();
+    if (savedPrefs) {
+      state.prefs = savedPrefs;
+      resetRun();
+      render();
+    } else {
+      state.prefs = defaultPrefs();
+      openPrefsModal("initial");
+    }
+
+    window.addEventListener('load', () => {
+      initMusicPlayer();
+    });
+  </script>
+</body>
+</html>
