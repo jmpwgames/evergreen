@@ -1,4 +1,4 @@
-#Evergreen
+Evergreen
 
 A procedurally generated queer romance kinetic novel in a single HTML file
 
